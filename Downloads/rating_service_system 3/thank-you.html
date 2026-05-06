@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rating Service System | Thank You</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="thankYou">
+  <button class="back-button" type="button" data-back-rating aria-label="Back to rating page">
+    <span aria-hidden="true">←</span>
+  </button>
+
+  <main class="page-shell thank-you-shell">
+    <section class="content-card thank-you-card">
+      <div class="success-icon" aria-hidden="true">✓</div>
+      <h1>Thank you for your feedback!</h1>
+      <p class="muted">Your response has been recorded successfully.</p>
+      <p id="countdownText" class="countdown-text">Redirecting in 5 seconds...</p>
+      <div class="progress-track" aria-hidden="true">
+        <div id="countdownProgress" class="progress-bar"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
