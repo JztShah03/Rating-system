@@ -33,30 +33,26 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
     setLastAttempt(option);
     setErrorMessage('');
     setBurstKey(Date.now());
+    setShowSuccess(true);
 
-    try {
-      await saveRating({
-        technicianId: selectedTechnician.id,
-        technicianName: selectedTechnician.name,
-        ratingValue: option.value,
-        ratingLabel: option.label,
-        emojiSelected: option.emoji,
-        deviceType: getDeviceType(),
-        userAgent: getUserAgent()
-      });
-
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-        setSelectedRating(null);
-        setLastAttempt(null);
-        setIsSaving(false);
-      }, 2000);
-    } catch (error) {
+    saveRating({
+      technicianId: selectedTechnician.id,
+      technicianName: selectedTechnician.name,
+      ratingValue: option.value,
+      ratingLabel: option.label,
+      emojiSelected: option.emoji,
+      deviceType: getDeviceType(),
+      userAgent: getUserAgent()
+    }).catch((error) => {
       console.error(error);
-      setErrorMessage('Unable to save your rating. Please try again.');
+    });
+
+    setTimeout(() => {
+      setShowSuccess(false);
+      setSelectedRating(null);
+      setLastAttempt(null);
       setIsSaving(false);
-    }
+    }, 2000);
   }
 
   function handleBack() {
@@ -105,17 +101,6 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
         </div>
 
         <AnimatePresence>
-          {isSaving && !showSuccess && !errorMessage ? (
-            <motion.div
-              className="status-message status-message--saving"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-            >
-              <span className="spinner" aria-hidden="true" /> Saving...
-            </motion.div>
-          ) : null}
-
           {errorMessage ? (
             <motion.div
               className="status-message status-message--error"
