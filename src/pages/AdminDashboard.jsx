@@ -36,7 +36,7 @@ function getRatingDate(value) {
 
 function buildTechnicianSummary(records) {
   return technicians.map((technician) => {
-    const technicianRecords = records.filter((record) => record.technicianId === technician.id);
+    const technicianRecords = records.filter((record) => String(record.technicianId) === technician.id);
     const total = technicianRecords.length;
     const ratingSum = technicianRecords.reduce((sum, record) => sum + Number(record.ratingValue || 0), 0);
     const average = total ? ratingSum / total : 0;
@@ -96,7 +96,7 @@ export default function AdminDashboard({ onLogout }) {
 
   const filteredRecords = useMemo(() => {
     return records.filter((record) => {
-      const matchesTechnician = technicianFilter === 'all' || record.technicianId === technicianFilter;
+      const matchesTechnician = technicianFilter === 'all' || String(record.technicianId) === technicianFilter;
       const recordDate = getRatingDate(record.timestamp);
       const matchesStart = !startDate || (recordDate && recordDate >= new Date(`${startDate}T00:00:00`));
       const matchesEnd = !endDate || (recordDate && recordDate <= new Date(`${endDate}T23:59:59`));

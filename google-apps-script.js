@@ -188,7 +188,7 @@ function readRatings_(sheet) {
     .map(function (row) {
       return {
         timestamp: formatTimestamp_(row[0]),
-        technicianId: row[1],
+        technicianId: String(row[1]),
         technicianName: row[2],
         ratingValue: Number(row[3]),
         ratingLabel: row[4],
