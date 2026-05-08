@@ -12,10 +12,8 @@ export const technicians = [
   { id: '1922', name: 'AZIDEE', image: '/technician11.jpg' },
   { id: '1329', name: 'SHAFIQ', image: '/technician12.jpg' },
   { id: '1942', name: 'NAWANESWARAN', image: '/technician13.jpg' },
+  { id: '1926', name: 'SHASHI', image: '/technician16.jpg'},
   { id: '2034', name: 'SHAHRIZAT', image: '/technician14.jpg' },
-  { id: '2038', name: 'LIEW YUNG BIN', image: '/technician15.jpg' }
-  
-
-
+  { id: '2038', name: 'LIEW YUNG BIN', image: '/technician15.jpg'}
 
 ];

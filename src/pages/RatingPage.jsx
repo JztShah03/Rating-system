@@ -73,7 +73,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
         <div className="selected-technician">
           <img src={selectedTechnician.image} alt={`${selectedTechnician.name} profile`} />
           <div>
-            <span className="eyebrow">You selected</span>
+            <span className="eyebrow">I AM</span>
             <h1>{selectedTechnician.name}</h1>
             <p>{selectedTechnician.id}</p>
           </div>

@@ -125,7 +125,7 @@ export default function AdminDashboard({ onLogout }) {
         <div>
           <span className="eyebrow">Admin Dashboard</span>
           <h1>Technician Rating Analytics</h1>
-          <p>Monitor customer feedback, technician performance, and rating trends from Google Sheets.</p>
+          
         </div>
         <div className="dashboard-header__actions">
           <LoadingButton isLoading={isLoading} loadingText="Refreshing..." onClick={loadData}>
@@ -136,14 +136,6 @@ export default function AdminDashboard({ onLogout }) {
           </button>
         </div>
       </header>
-
-      <section className="warning-banner">
-        <ShieldAlert size={20} aria-hidden="true" />
-        <p>
-          Demo security only: the admin password is stored in a Vite client environment variable and is visible in
-          the browser bundle. Replace with real server-side authentication before production use.
-        </p>
-      </section>
 
       <section className="filter-panel" aria-label="Dashboard filters">
         <label>
