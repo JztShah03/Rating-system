@@ -15,6 +15,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [lastAttempt, setLastAttempt] = useState(null);
   const [burstKey, setBurstKey] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     if (!selectedTechnician) {
@@ -44,7 +45,13 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
         userAgent: getUserAgent()
       });
 
-      navigate('/thank-you', { replace: true });
+      setShowSuccess(true);
+      setTimeout(() => {
+        setShowSuccess(false);
+        setSelectedRating(null);
+        setLastAttempt(null);
+        setIsSaving(false);
+      }, 2000);
     } catch (error) {
       console.error(error);
       setErrorMessage('Unable to save your rating. Please try again.');
@@ -98,15 +105,14 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
         </div>
 
         <AnimatePresence>
-          {isSaving && !errorMessage ? (
+          {isSaving && !showSuccess && !errorMessage ? (
             <motion.div
               className="status-message status-message--saving"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
             >
-              <span className="spinner" aria-hidden="true" />     Thank you, we appreciate your evaluation!
-
+              <span className="spinner" aria-hidden="true" /> Saving...
             </motion.div>
           ) : null}
 
@@ -126,6 +132,28 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
           ) : null}
         </AnimatePresence>
       </motion.section>
+
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            className="success-modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="success-modal"
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 260 }}
+            >
+              <div className="success-modal__icon">&#10003;</div>
+              <h2>Thank you, we appreciate your evaluation!</h2>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

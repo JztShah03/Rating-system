@@ -829,3 +829,44 @@ td span {
 .table-card + .table-card {
   margin-top: 20px;
 }
+
+.success-modal-overlay {
+  align-items: center;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: fixed;
+  z-index: 100;
+}
+
+.success-modal {
+  align-items: center;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  inset: 0;
+  justify-content: center;
+  padding: 36px;
+  position: fixed;
+  text-align: center;
+}
+
+.success-modal__icon {
+  align-items: center;
+  background: #ecfdf5;
+  border-radius: 999px;
+  color: var(--success);
+  display: inline-flex;
+  font-size: 2rem;
+  font-weight: 900;
+  height: 72px;
+  justify-content: center;
+  margin-bottom: 22px;
+  width: 72px;
+}
+
+.success-modal h2 {
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  margin-bottom: 0;
+}
