@@ -5,6 +5,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  Legend,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -121,6 +122,14 @@ export default function AdminDashboard({ onLogout }) {
     ? [...activeTechnicians].sort((a, b) => a.average - b.average || b.total - a.total)[0]
     : null;
   const distribution = buildRatingDistribution(filteredRecords);
+  const ratingBreakdownData = technicianSummary.map((item) => ({
+    technicianName: item.technicianName,
+    '1': item.counts[1],
+    '2': item.counts[2],
+    '3': item.counts[3],
+    '4': item.counts[4],
+    '5': item.counts[5]
+  }));
   const recentRecords = filteredRecords.slice(0, 10);
 
   return (
@@ -217,14 +226,19 @@ export default function AdminDashboard({ onLogout }) {
           </section>
 
           <section className="charts-grid">
-            <AdminChart title="Average Rating by Service">
+            <AdminChart title="Rating Breakdown by Service">
               <ResponsiveContainer width="100%" height={310}>
-                <BarChart data={technicianSummary} margin={{ top: 10, right: 20, left: 0, bottom: 48 }}>
+                <BarChart data={ratingBreakdownData} margin={{ top: 10, right: 20, left: 0, bottom: 48 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="technicianName" angle={-35} textAnchor="end" interval={0} height={70} />
-                  <YAxis domain={[0, 5]} />
+                  <YAxis allowDecimals={false} />
                   <Tooltip />
-                  <Bar dataKey="average" name="Average Rating" fill="#2563eb" radius={[8, 8, 0, 0]} />
+                  <Legend />
+                  <Bar dataKey="1" stackId="a" fill="#ef4444" name="Very Unsatisfied (1)" />
+                  <Bar dataKey="2" stackId="a" fill="#f97316" name="Unsatisfied (2)" />
+                  <Bar dataKey="3" stackId="a" fill="#eab308" name="Neutral (3)" />
+                  <Bar dataKey="4" stackId="a" fill="#84cc16" name="Satisfied (4)" />
+                  <Bar dataKey="5" stackId="a" fill="#22c55e" name="Very Satisfied (5)" />
                 </BarChart>
               </ResponsiveContainer>
             </AdminChart>
