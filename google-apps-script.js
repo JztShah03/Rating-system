@@ -18,7 +18,6 @@ const SPREADSHEET_ID = ''; // Optional. Leave blank if this script is bound to t
 const SHEET_NAME = 'Ratings';
 const HEADERS = [
   'Timestamp',
-  'Technician ID',
   'Technician Name',
   'Rating Value',
   'Rating Label',
@@ -65,7 +64,6 @@ function doPost(e) {
     const sheet = getOrCreateRatingsSheet_();
     sheet.appendRow([
       new Date(),
-      String(payload.technicianId).trim(),
       String(payload.technicianName).trim(),
       Number(payload.ratingValue),
       String(payload.ratingLabel || '').trim(),
@@ -105,10 +103,6 @@ function parsePayload_(e) {
 }
 
 function validatePayload_(payload) {
-  if (!payload.technicianId) {
-    throw new Error('technicianId is required.');
-  }
-
   if (!payload.technicianName) {
     throw new Error('technicianName is required.');
   }
@@ -188,13 +182,12 @@ function readRatings_(sheet) {
     .map(function (row) {
       return {
         timestamp: formatTimestamp_(row[0]),
-        technicianId: String(row[1]),
-        technicianName: row[2],
-        ratingValue: Number(row[3]),
-        ratingLabel: row[4],
-        emojiSelected: row[5],
-        deviceType: row[6],
-        userAgent: row[7]
+        technicianName: row[1],
+        ratingValue: Number(row[2]),
+        ratingLabel: row[3],
+        emojiSelected: row[4],
+        deviceType: row[5],
+        userAgent: row[6]
       };
     });
 }
