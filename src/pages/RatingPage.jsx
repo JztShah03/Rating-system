@@ -46,7 +46,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
 
       setShowSuccess(true);
       onClearTechnician();
-      navigate('/', { replace: true });
+      navigate('/thank-you', { replace: true });
     } catch (error) {
       console.error(error);
       setErrorMessage('Unable to save rating. Please try again.');
