@@ -124,7 +124,7 @@ export default function AdminDashboard({ onLogout }) {
         <div>
           <span className="eyebrow">Admin Dashboard</span>
           <h1>ICT Service Analytics</h1>
-          <p>Monitor customer feedback, service performance, and rating trends from Google Sheets.</p>
+          <p>Monitor user feedback, service performance, and rating trends from Google Sheets.</p>
         </div>
         <div className="dashboard-header__actions">
           <LoadingButton isLoading={isLoading} loadingText="Refreshing..." onClick={loadData}>
