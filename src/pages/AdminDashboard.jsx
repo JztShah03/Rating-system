@@ -124,7 +124,7 @@ export default function AdminDashboard({ onLogout }) {
       <header className="dashboard-header">
         <div>
           <span className="eyebrow">Admin Dashboard</span>
-          <h1>Technician Rating Analytics</h1>
+          <h1>ICT Rating Analytics</h1>
           
         </div>
         <div className="dashboard-header__actions">
@@ -139,9 +139,9 @@ export default function AdminDashboard({ onLogout }) {
 
       <section className="filter-panel" aria-label="Dashboard filters">
         <label>
-          Technician
+          ICT Staff
           <select value={technicianFilter} onChange={(event) => setTechnicianFilter(event.target.value)}>
-            <option value="all">All technicians</option>
+            <option value="all">All Staff</option>
             {technicians.map((technician) => (
               <option key={technician.id} value={technician.id}>
                 {technician.name} ({technician.id})
@@ -267,7 +267,7 @@ export default function AdminDashboard({ onLogout }) {
               <table>
                 <thead>
                   <tr>
-                    <th>Technician</th>
+                    <th>ICT Staff</th>
                     <th>Total</th>
                     <th>Average</th>
                     <th>1 😡</th>
