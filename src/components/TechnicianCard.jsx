@@ -8,7 +8,7 @@ export default function TechnicianCard({ technician, onSelect }) {
       whileHover={{ y: -6, scale: 1.02 }}
       whileTap={{ scale: 0.97 }}
       type="button"
-      aria-label={`Select technician ${technician.name}`}
+      aria-label={`Select service ${technician.name}`}
     >
       <img className="technician-card__image" src={technician.image} alt={`${technician.name} profile`} />
       <div className="technician-card__content">

@@ -128,8 +128,8 @@ export default function AdminDashboard({ onLogout }) {
       <header className="dashboard-header">
         <div>
           <span className="eyebrow">Admin Dashboard</span>
-          <h1>ICT Staff Analytics</h1>
-          <p>Monitor customer feedback, staff performance, and rating trends from Google Sheets.</p>
+          <h1>ICT Service Analytics</h1>
+          <p>Monitor customer feedback, service performance, and rating trends from Google Sheets.</p>
         </div>
         <div className="dashboard-header__actions">
           <LoadingButton isLoading={isLoading} loadingText="Refreshing..." onClick={loadData}>
@@ -143,9 +143,9 @@ export default function AdminDashboard({ onLogout }) {
 
       <section className="filter-panel" aria-label="Dashboard filters">
         <label>
-          ICT Staff
+          ICT Service
           <select value={technicianFilter} onChange={(event) => setTechnicianFilter(event.target.value)}>
-            <option value="all">All Staff</option>
+            <option value="all">All Services</option>
             {technicians.map((technician) => (
               <option key={technician.name} value={technician.name}>
                 {technician.name}
@@ -217,7 +217,7 @@ export default function AdminDashboard({ onLogout }) {
           </section>
 
           <section className="charts-grid">
-            <AdminChart title="Average Rating by Technician">
+            <AdminChart title="Average Rating by Service">
               <ResponsiveContainer width="100%" height={310}>
                 <BarChart data={technicianSummary} margin={{ top: 10, right: 20, left: 0, bottom: 48 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -229,7 +229,7 @@ export default function AdminDashboard({ onLogout }) {
               </ResponsiveContainer>
             </AdminChart>
 
-            <AdminChart title="Number of Ratings per Technician">
+            <AdminChart title="Number of Ratings per Service">
               <ResponsiveContainer width="100%" height={310}>
                 <BarChart data={technicianSummary} margin={{ top: 10, right: 20, left: 0, bottom: 48 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -264,14 +264,14 @@ export default function AdminDashboard({ onLogout }) {
 
           <section className="table-card">
             <div className="table-card__header">
-              <h2>Technician Performance Breakdown</h2>
-              <p>Average rating and distribution count from 1 to 5 for every technician.</p>
+              <h2>Service Performance Breakdown</h2>
+              <p>Average rating and distribution count from 1 to 5 for every service.</p>
             </div>
             <div className="table-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th>ICT Staff</th>
+                    <th>ICT Service</th>
                     <th>Total</th>
                     <th>Average</th>
                     <th>1 😡</th>
@@ -311,7 +311,7 @@ export default function AdminDashboard({ onLogout }) {
                 <thead>
                   <tr>
                     <th>Timestamp</th>
-                    <th>Technician</th>
+                    <th>Service</th>
                     <th>Rating</th>
                     <th>Device</th>
                     <th>User Agent</th>

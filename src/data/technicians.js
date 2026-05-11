@@ -1,6 +1,6 @@
 export const technicians = [
-  { name: 'JONATHAN', image: '/technician1.png' },
-  { name: 'CHEAH MENG KIT', image: '/technician2.jpg' },
+  { name: 'ACCOUNT', image: '/technician1.png' },
+  { name: 'AV / PROJECTOR', image: '/technician2.jpg' },
   { name: 'COMPUTER HARDWARE', image: '/technician3.jpg' },
   { name: 'EDU PLATFORM', image: '/technician4.jpg' },
   { name: 'GENERAL', image: '/technician5.jpg' },

@@ -33,25 +33,27 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
     setLastAttempt(option);
     setErrorMessage('');
     setBurstKey(Date.now());
-    setShowSuccess(true);
 
-    saveRating({
-      technicianName: selectedTechnician.name,
-      ratingValue: option.value,
-      ratingLabel: option.label,
-      emojiSelected: option.emoji,
-      deviceType: getDeviceType(),
-      userAgent: getUserAgent()
-    }).catch((error) => {
+    try {
+      await saveRating({
+        technicianName: selectedTechnician.name,
+        ratingValue: option.value,
+        ratingLabel: option.label,
+        emojiSelected: option.emoji,
+        deviceType: getDeviceType(),
+        userAgent: getUserAgent()
+      });
+
+      setShowSuccess(true);
+      window.setTimeout(() => {
+        onClearTechnician();
+        navigate('/', { replace: true });
+      }, 1500);
+    } catch (error) {
       console.error(error);
-    });
-
-    setTimeout(() => {
-      setShowSuccess(false);
-      setSelectedRating(null);
-      setLastAttempt(null);
+      setErrorMessage('Unable to save rating. Please try again.');
       setIsSaving(false);
-    }, 2000);
+    }
   }
 
   function handleBack() {
@@ -61,7 +63,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
 
   return (
     <main className="page page--rating">
-      <BackButton onClick={handleBack} label="Select another ICT Staff" />
+      <BackButton onClick={handleBack} label="Select another ICT Service" />
 
       <motion.section
         className="rating-panel"
@@ -72,7 +74,6 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
         <div className="selected-technician">
           <img src={selectedTechnician.image} alt={`${selectedTechnician.name} profile`} />
           <div>
-            <span className="eyebrow">I AM</span>
             <h1>{selectedTechnician.name}</h1>
           </div>
         </div>

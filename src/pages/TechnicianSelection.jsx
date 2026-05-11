@@ -18,7 +18,7 @@ export default function TechnicianSelection({ onSelectTechnician }) {
         </p>
       </motion.section>
 
-      <section className="technician-grid" aria-label="Technician list">
+      <section className="technician-grid" aria-label="Service list">
         {technicians.map((technician) => (
           <TechnicianCard key={technician.name} technician={technician} onSelect={onSelectTechnician} />
         ))}
