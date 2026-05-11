@@ -13,7 +13,6 @@ export default function TechnicianCard({ technician, onSelect }) {
       <img className="technician-card__image" src={technician.image} alt={`${technician.name} profile`} />
       <div className="technician-card__content">
         <h2>{technician.name}</h2>
-        <p>{technician.id}</p>
       </div>
     </motion.button>
   );

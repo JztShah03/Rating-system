@@ -217,7 +217,7 @@ p {
 .selected-technician {
   align-items: center;
   display: flex;
-  gap: 20px;
+  gap: 15px;
   margin-bottom: 34px;
 }
 

@@ -36,7 +36,6 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
     setShowSuccess(true);
 
     saveRating({
-      technicianId: selectedTechnician.id,
       technicianName: selectedTechnician.name,
       ratingValue: option.value,
       ratingLabel: option.label,
@@ -75,7 +74,6 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
           <div>
             <span className="eyebrow">I AM</span>
             <h1>{selectedTechnician.name}</h1>
-            <p>{selectedTechnician.id}</p>
           </div>
         </div>
 

@@ -36,7 +36,10 @@ function getRatingDate(value) {
 
 function buildTechnicianSummary(records) {
   return technicians.map((technician) => {
-    const technicianRecords = records.filter((record) => String(record.technicianId) === technician.id);
+    const technicianRecords = records.filter((record) => {
+      const recordTechnician = String(record.technicianName || record.technicianId);
+      return recordTechnician === technician.name;
+    });
     const total = technicianRecords.length;
     const ratingSum = technicianRecords.reduce((sum, record) => sum + Number(record.ratingValue || 0), 0);
     const average = total ? ratingSum / total : 0;
@@ -47,9 +50,9 @@ function buildTechnicianSummary(records) {
     }, {});
 
     return {
-      technicianId: technician.id,
+      technicianId: technician.name,
       technicianName: technician.name,
-      name: `${technician.name} (${technician.id})`,
+      name: technician.name,
       total,
       average: Number(average.toFixed(2)),
       counts
@@ -96,7 +99,8 @@ export default function AdminDashboard({ onLogout }) {
 
   const filteredRecords = useMemo(() => {
     return records.filter((record) => {
-      const matchesTechnician = technicianFilter === 'all' || String(record.technicianId) === technicianFilter;
+      const recordTechnician = String(record.technicianName || record.technicianId);
+      const matchesTechnician = technicianFilter === 'all' || recordTechnician === technicianFilter;
       const recordDate = getRatingDate(record.timestamp);
       const matchesStart = !startDate || (recordDate && recordDate >= new Date(`${startDate}T00:00:00`));
       const matchesEnd = !endDate || (recordDate && recordDate <= new Date(`${endDate}T23:59:59`));
@@ -124,8 +128,8 @@ export default function AdminDashboard({ onLogout }) {
       <header className="dashboard-header">
         <div>
           <span className="eyebrow">Admin Dashboard</span>
-          <h1>ICT Rating Analytics</h1>
-          
+          <h1>ICT Staff Analytics</h1>
+          <p>Monitor customer feedback, staff performance, and rating trends from Google Sheets.</p>
         </div>
         <div className="dashboard-header__actions">
           <LoadingButton isLoading={isLoading} loadingText="Refreshing..." onClick={loadData}>
@@ -143,8 +147,8 @@ export default function AdminDashboard({ onLogout }) {
           <select value={technicianFilter} onChange={(event) => setTechnicianFilter(event.target.value)}>
             <option value="all">All Staff</option>
             {technicians.map((technician) => (
-              <option key={technician.id} value={technician.id}>
-                {technician.name} ({technician.id})
+              <option key={technician.name} value={technician.name}>
+                {technician.name}
               </option>
             ))}
           </select>
@@ -282,7 +286,6 @@ export default function AdminDashboard({ onLogout }) {
                     <tr key={item.technicianId}>
                       <td>
                         <strong>{item.technicianName}</strong>
-                        <span>{item.technicianId}</span>
                       </td>
                       <td>{item.total}</td>
                       <td>{formatAverage(item.average)}</td>
@@ -315,23 +318,25 @@ export default function AdminDashboard({ onLogout }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {recentRecords.map((record, index) => (
-                    <tr key={`${record.timestamp}-${record.technicianId}-${index}`}>
-                      <td>{normalizeTimestamp(record.timestamp)}</td>
-                      <td>
-                        <strong>{record.technicianName}</strong>
-                        <span>{record.technicianId}</span>
-                      </td>
-                      <td>
-                        <strong>
-                          {record.emojiSelected} {record.ratingValue}/5
-                        </strong>
-                        <span>{record.ratingLabel}</span>
-                      </td>
-                      <td>{record.deviceType || 'Unknown'}</td>
-                      <td className="user-agent-cell">{record.userAgent || 'Unknown'}</td>
-                    </tr>
-                  ))}
+                  {recentRecords.map((record, index) => {
+                    const recordTechnician = record.technicianName || record.technicianId || 'Unknown';
+                    return (
+                      <tr key={`${record.timestamp}-${recordTechnician}-${index}`}>
+                        <td>{normalizeTimestamp(record.timestamp)}</td>
+                        <td>
+                          <strong>{recordTechnician}</strong>
+                        </td>
+                        <td>
+                          <strong>
+                            {record.emojiSelected} {record.ratingValue}/5
+                          </strong>
+                          <span>{record.ratingLabel}</span>
+                        </td>
+                        <td>{record.deviceType || 'Unknown'}</td>
+                        <td className="user-agent-cell">{record.userAgent || 'Unknown'}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
