@@ -80,7 +80,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
         </div>
 
         <div className="rating-copy">
-          <h2>How was my service?</h2>
+          <h2>How was the service?</h2>
           <p>Please rate based on the service quality you received today.</p>
         </div>
 
