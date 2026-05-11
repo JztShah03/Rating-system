@@ -45,10 +45,8 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
       });
 
       setShowSuccess(true);
-      window.setTimeout(() => {
-        onClearTechnician();
-        navigate('/', { replace: true });
-      }, 1500);
+      onClearTechnician();
+      navigate('/', { replace: true });
     } catch (error) {
       console.error(error);
       setErrorMessage('Unable to save rating. Please try again.');

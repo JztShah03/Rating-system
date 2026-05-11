@@ -592,22 +592,22 @@ p {
   margin-bottom: 20px;
 }
 
-.stat-card {
-  padding: 20px;
+.stats-grid .stat-card {
+  padding: 16px;
 }
 
-.stat-card span,
-.stat-card small {
+.stats-grid .stat-card span,
+.stats-grid .stat-card small {
   color: var(--muted);
   display: block;
 }
 
-.stat-card strong {
+.stats-grid .stat-card strong {
   display: block;
-  font-size: clamp(1.65rem, 3vw, 2.5rem);
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
   letter-spacing: -0.045em;
-  line-height: 1;
-  margin: 10px 0 8px;
+  line-height: 1.1;
+  margin: 8px 0 6px;
 }
 
 .charts-grid {
