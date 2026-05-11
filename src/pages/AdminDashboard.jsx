@@ -4,10 +4,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   Legend,
-  Pie,
-  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -18,9 +15,8 @@ import LoadingButton from '../components/LoadingButton';
 import StatCard from '../components/StatCard';
 import { technicians } from '../data/technicians';
 import { fetchRatings } from '../services/googleSheetService';
-import { formatAverage, getRatingEmoji, getRatingLabel } from '../utils/ratingHelpers';
+import { formatAverage } from '../utils/ratingHelpers';
 
-const chartColors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e'];
 
 
 function normalizeTimestamp(value) {
@@ -59,15 +55,6 @@ function buildTechnicianSummary(records) {
       counts
     };
   });
-}
-
-function buildRatingDistribution(records) {
-  return [1, 2, 3, 4, 5].map((value) => ({
-    name: `${value} - ${getRatingLabel(value)}`,
-    value,
-    count: records.filter((record) => Number(record.ratingValue) === value).length,
-    emoji: getRatingEmoji(value)
-  }));
 }
 
 export default function AdminDashboard({ onLogout }) {
@@ -121,7 +108,6 @@ export default function AdminDashboard({ onLogout }) {
   const lowestTechnician = activeTechnicians.length
     ? [...activeTechnicians].sort((a, b) => a.average - b.average || b.total - a.total)[0]
     : null;
-  const distribution = buildRatingDistribution(filteredRecords);
   const ratingBreakdownData = technicianSummary.map((item) => ({
     technicianName: item.technicianName,
     '1': item.counts[1],
@@ -227,13 +213,21 @@ export default function AdminDashboard({ onLogout }) {
 
           <section className="charts-grid">
             <AdminChart title="Rating Breakdown by Service">
-              <ResponsiveContainer width="100%" height={310}>
-                <BarChart data={ratingBreakdownData} margin={{ top: 10, right: 20, left: 0, bottom: 48 }}>
+              <ResponsiveContainer width="100%" height={360}>
+                <BarChart data={ratingBreakdownData} margin={{ top: 20, right: 20, left: 0, bottom: 70 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="technicianName" angle={-35} textAnchor="end" interval={0} height={70} />
+                  <XAxis
+                    dataKey="technicianName"
+                    angle={-45}
+                    textAnchor="end"
+                    interval={0}
+                    height={90}
+                    tick={{ fontSize: 12 }}
+                    minTickGap={10}
+                  />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
-                  <Legend />
+                  <Legend verticalAlign="top" height={36} />
                   <Bar dataKey="1" stackId="a" fill="#ef4444" name="Very Unsatisfied (1)" />
                   <Bar dataKey="2" stackId="a" fill="#f97316" name="Unsatisfied (2)" />
                   <Bar dataKey="3" stackId="a" fill="#eab308" name="Neutral (3)" />
@@ -244,10 +238,18 @@ export default function AdminDashboard({ onLogout }) {
             </AdminChart>
 
             <AdminChart title="Number of Ratings per Service">
-              <ResponsiveContainer width="100%" height={310}>
-                <BarChart data={technicianSummary} margin={{ top: 10, right: 20, left: 0, bottom: 48 }}>
+              <ResponsiveContainer width="100%" height={360}>
+                <BarChart data={technicianSummary} margin={{ top: 20, right: 20, left: 0, bottom: 70 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="technicianName" angle={-35} textAnchor="end" interval={0} height={70} />
+                  <XAxis
+                    dataKey="technicianName"
+                    angle={-45}
+                    textAnchor="end"
+                    interval={0}
+                    height={90}
+                    tick={{ fontSize: 12 }}
+                    minTickGap={10}
+                  />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
                   <Bar dataKey="total" name="Total Ratings" fill="#0f766e" radius={[8, 8, 0, 0]} />
@@ -255,25 +257,6 @@ export default function AdminDashboard({ onLogout }) {
               </ResponsiveContainer>
             </AdminChart>
 
-            <AdminChart title="Rating Distribution">
-              <ResponsiveContainer width="100%" height={310}>
-                <PieChart>
-                  <Pie
-                    data={distribution}
-                    dataKey="count"
-                    nameKey="name"
-                    innerRadius={70}
-                    outerRadius={105}
-                    paddingAngle={3}
-                  >
-                    {distribution.map((entry, index) => (
-                      <Cell key={entry.value} fill={chartColors[index % chartColors.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value, name, item) => [`${value} ratings`, `${item.payload.emoji} ${name}`]} />
-                </PieChart>
-              </ResponsiveContainer>
-            </AdminChart>
           </section>
 
           <section className="table-card">
