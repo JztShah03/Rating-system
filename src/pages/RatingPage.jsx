@@ -25,7 +25,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
 
   if (!selectedTechnician) return null;
 
-  async function handleSubmit(option) {
+  function handleSubmit(option) {
     if (isSaving) return;
 
     setIsSaving(true);
@@ -34,24 +34,19 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
     setErrorMessage('');
     setBurstKey(Date.now());
 
-    try {
-      await saveRating({
-        technicianName: selectedTechnician.name,
-        ratingValue: option.value,
-        ratingLabel: option.label,
-        emojiSelected: option.emoji,
-        deviceType: getDeviceType(),
-        userAgent: getUserAgent()
-      });
+    onClearTechnician();
+    navigate('/thank-you', { replace: true });
 
-      setShowSuccess(true);
-      onClearTechnician();
-      navigate('/thank-you', { replace: true });
-    } catch (error) {
+    saveRating({
+      technicianName: selectedTechnician.name,
+      ratingValue: option.value,
+      ratingLabel: option.label,
+      emojiSelected: option.emoji,
+      deviceType: getDeviceType(),
+      userAgent: getUserAgent()
+    }).catch((error) => {
       console.error(error);
-      setErrorMessage('Unable to save rating. Please try again.');
-      setIsSaving(false);
-    }
+    });
   }
 
   function handleBack() {
