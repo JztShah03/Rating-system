@@ -12,9 +12,9 @@ export default function TechnicianSelection({ onSelectTechnician }) {
         transition={{ duration: 0.35 }}
       >
         <span className="eyebrow">Service Feedback</span>
-        <h1>Please Select Your Services you Received</h1>
+        <h1>Please Select The Service you Received</h1>
         <p>
-          Select the ICT service you received. Your feedback helps us improve service quality and enhance customer experience.
+          Your feedback helps us improve service quality and enhance customer experience.
         </p>
       </motion.section>
 

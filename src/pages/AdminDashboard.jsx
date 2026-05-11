@@ -5,6 +5,9 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  Legend,
+  Line,
+  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -19,7 +22,7 @@ import { technicians } from '../data/technicians';
 import { fetchRatings } from '../services/googleSheetService';
 import { formatAverage, getRatingEmoji, getRatingLabel } from '../utils/ratingHelpers';
 
-const chartColors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e'];
+const chartColors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6', '#ec4899', '#f43f5e', '#fb7185', '#fdba74', '#fde047', '#bef264'];
 
 
 function normalizeTimestamp(value) {
@@ -67,6 +70,33 @@ function buildRatingDistribution(records) {
     count: records.filter((record) => Number(record.ratingValue) === value).length,
     emoji: getRatingEmoji(value)
   }));
+}
+
+function buildServicePerformanceOverTime(records) {
+  const dateServiceMap = {};
+
+  records.forEach((record) => {
+    const date = new Date(record.timestamp).toISOString().split('T')[0];
+    const service = record.technicianName || record.technicianId || 'Unknown';
+    if (!dateServiceMap[date]) dateServiceMap[date] = {};
+    if (!dateServiceMap[date][service]) dateServiceMap[date][service] = { sum: 0, count: 0 };
+    dateServiceMap[date][service].sum += Number(record.ratingValue || 0);
+    dateServiceMap[date][service].count += 1;
+  });
+
+  const dates = Object.keys(dateServiceMap).sort();
+  return dates.map((date) => {
+    const obj = { date };
+    technicians.forEach((tech) => {
+      const service = tech.name;
+      if (dateServiceMap[date][service]) {
+        obj[service] = Number((dateServiceMap[date][service].sum / dateServiceMap[date][service].count).toFixed(2));
+      } else {
+        obj[service] = null;
+      }
+    });
+    return obj;
+  });
 }
 
 export default function AdminDashboard({ onLogout }) {
@@ -122,6 +152,7 @@ export default function AdminDashboard({ onLogout }) {
     : null;
   const distribution = buildRatingDistribution(filteredRecords);
   const recentRecords = filteredRecords.slice(0, 10);
+  const servicePerformanceData = buildServicePerformanceOverTime(filteredRecords);
 
   return (
     <main className="page page--dashboard">
@@ -256,11 +287,28 @@ export default function AdminDashboard({ onLogout }) {
                       <Cell key={entry.value} fill={chartColors[index % chartColors.length]} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value, name, item) => [`${value} ratings`, `${item.payload.emoji} ${name}`]} />
-                </PieChart>
+            <AdminChart title="Service Performance Over Time">
+              <ResponsiveContainer width="100%" height={310}>
+                <LineChart data={servicePerformanceData} margin={{ top: 10, right: 20, left: 0, bottom: 48 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis domain={[0, 5]} />
+                  <Tooltip />
+                  <Legend />
+                  {technicians.map((tech, index) => (
+                    <Line
+                      key={tech.name}
+                      type="monotone"
+                      dataKey={tech.name}
+                      stroke={chartColors[index % chartColors.length]}
+                      strokeWidth={2}
+                      dot={{ r: 3 }}
+                      connectNulls={false}
+                    />
+                  ))}
+                </LineChart>
               </ResponsiveContainer>
             </AdminChart>
-          </section>
 
           <section className="table-card">
             <div className="table-card__header">
