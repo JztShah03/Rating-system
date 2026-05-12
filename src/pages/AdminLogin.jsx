@@ -31,7 +31,7 @@ export default function AdminLogin({ onLogin }) {
         </div>
         <span className="eyebrow">Admin Access</span>
         <h1>Service Rating Dashboard</h1>
-        <p>Enter the admin password to view customer rating analytics.</p>
+        <p>Enter the admin password to view user rating analytics.</p>
 
         <form onSubmit={handleSubmit} className="login-form">
           <label htmlFor="admin-password">Password</label>
