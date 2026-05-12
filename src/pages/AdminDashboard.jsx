@@ -102,13 +102,16 @@ export default function AdminDashboard({ onLogout }) {
   const overallAverage = totalRatings ? ratingSum / totalRatings : 0;
   const technicianSummary = buildTechnicianSummary(filteredRecords);
   const activeTechnicians = technicianSummary.filter((item) => item.total > 0);
+  const filteredTechnicianSummary = technicianFilter === 'all'
+    ? technicianSummary
+    : technicianSummary.filter((item) => item.technicianName === technicianFilter);
   const bestTechnician = activeTechnicians.length
     ? [...activeTechnicians].sort((a, b) => b.average - a.average || b.total - a.total)[0]
     : null;
   const lowestTechnician = activeTechnicians.length
     ? [...activeTechnicians].sort((a, b) => a.average - b.average || b.total - a.total)[0]
     : null;
-  const ratingBreakdownData = technicianSummary.map((item) => ({
+  const ratingBreakdownData = filteredTechnicianSummary.map((item) => ({
     technicianName: item.technicianName,
     '1': item.counts[1],
     '2': item.counts[2],
@@ -239,7 +242,7 @@ export default function AdminDashboard({ onLogout }) {
 
             <AdminChart title="Number of Ratings per Service">
               <ResponsiveContainer width="100%" height={360}>
-                <BarChart data={technicianSummary} margin={{ top: 20, right: 20, left: 0, bottom: 70 }}>
+                <BarChart data={filteredTechnicianSummary} margin={{ top: 20, right: 20, left: 0, bottom: 70 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis
                     dataKey="technicianName"
@@ -279,7 +282,7 @@ export default function AdminDashboard({ onLogout }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {technicianSummary.map((item) => (
+                  {filteredTechnicianSummary.map((item) => (
                     <tr key={item.technicianId}>
                       <td>
                         <strong>{item.technicianName}</strong>
