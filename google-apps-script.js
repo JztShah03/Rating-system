@@ -20,7 +20,6 @@ const HEADERS = [
   'Timestamp',
   'Technician Name',
   'Rating Value',
-  'Rating Label',
   'Emoji Selected',
   'Device Type',
   'User Agent'
@@ -66,7 +65,6 @@ function doPost(e) {
       new Date(),
       String(payload.technicianName).trim(),
       Number(payload.ratingValue),
-      String(payload.ratingLabel || '').trim(),
       String(payload.emojiSelected || '').trim(),
       String(payload.deviceType || '').trim(),
       String(payload.userAgent || '').trim()
@@ -185,10 +183,9 @@ function readRatings_(sheet) {
         timestamp: formatTimestamp_(row[0]),
         technicianName: row[1],
         ratingValue: Number(row[2]),
-        ratingLabel: row[3],
-        emojiSelected: row[4],
-        deviceType: row[5],
-        userAgent: row[6]
+        emojiSelected: row[3],
+        deviceType: row[4],
+        userAgent: row[5]
       };
     });
 }
