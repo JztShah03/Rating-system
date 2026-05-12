@@ -175,9 +175,10 @@ function readRatings_(sheet) {
 
   return values
     .filter(function (row) {
-      return row.some(function (cell) {
-        return cell !== '' && cell !== null;
-      });
+      var technicianName = String(row[1] || '').trim();
+      var ratingValue = Number(row[2]);
+      var hasValidRating = Number.isFinite(ratingValue) && ratingValue >= 1 && ratingValue <= 5;
+      return technicianName !== '' && hasValidRating;
     })
     .map(function (row) {
       return {
