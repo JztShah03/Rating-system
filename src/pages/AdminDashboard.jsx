@@ -307,15 +307,6 @@ export default function AdminDashboard({ onLogout }) {
             </div>
             <div className="table-wrap">
               <table>
-                <thead>
-                  <tr>
-                    <th>Timestamp</th>
-                    <th>Service</th>
-                    <th>Rating</th>
-                    <th>Device</th>
-                    <th>User Agent</th>
-                  </tr>
-                </thead>
                 <tbody>
                   {recentRecords.map((record, index) => {
                     const recordTechnician = record.technicianName || record.technicianId || 'Unknown';
