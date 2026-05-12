@@ -22,8 +22,30 @@
   --radius-sm: 14px;
 }
 
+html {
+  min-height: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  -webkit-text-size-adjust: 100%;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
 * {
   box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  touch-action: manipulation;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 32rem),
+    radial-gradient(circle at bottom right, rgba(20, 184, 166, 0.08), transparent 30rem),
+    var(--surface-soft);
 }
 
 body {

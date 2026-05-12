@@ -271,11 +271,11 @@ export default function AdminDashboard({ onLogout }) {
                     <th>ICT Service</th>
                     <th>Total</th>
                     <th>Average</th>
-                    <th>1 😡</th>
-                    <th>2 🙁</th>
-                    <th>3 😐</th>
-                    <th>4 🙂</th>
-                    <th>5 😄</th>
+                    <th>Very Unsatisfied</th>
+                    <th>Unsatisfied</th>
+                    <th>Neutral</th>
+                    <th>Satisfied</th>
+                    <th>Very Satisfied</th>
                   </tr>
                 </thead>
                 <tbody>
