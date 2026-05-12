@@ -330,7 +330,6 @@ export default function AdminDashboard({ onLogout }) {
                           <strong>
                             {record.emojiSelected} {record.ratingValue}/5
                           </strong>
-                          <span>{record.ratingLabel}</span>
                         </td>
                         <td>{record.deviceType || 'Unknown'}</td>
                         <td className="user-agent-cell">{record.userAgent || 'Unknown'}</td>
