@@ -111,8 +111,7 @@ export default function AdminDashboard({ onLogout }) {
   const lowestTechnician = activeTechnicians.length
     ? [...activeTechnicians].sort((a, b) => a.average - b.average || b.total - a.total)[0]
     : null;
-  cons
-  const recentRecords = filteredRecords.slice(1, 11);t ratingBreakdownData = filteredTechnicianSummary.map((item) => ({
+  const ratingBreakdownData = filteredTechnicianSummary.map((item) => ({
     technicianName: item.technicianName,
     '1': item.counts[1],
     '2': item.counts[2],
@@ -120,6 +119,9 @@ export default function AdminDashboard({ onLogout }) {
     '4': item.counts[4],
     '5': item.counts[5]
   }));
+  const recentRecords = filteredRecords
+    .filter((record) => record.timestamp !== 'Timestamp' && record.technicianName !== 'Service Name')
+    .slice(0, 10);
 
   return (
     <main className="page page--dashboard">
