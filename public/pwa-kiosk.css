@@ -1,0 +1,318 @@
+/**
+ * PWA Kiosk Mode Responsive CSS
+ * Optimized for iPad fullscreen standalone mode
+ */
+
+:root {
+  /* Safe area insets for notched iPads */
+  --sat: env(safe-area-inset-top, 0);
+  --sal: env(safe-area-inset-left, 0);
+  --sar: env(safe-area-inset-right, 0);
+  --sab: env(safe-area-inset-bottom, 0);
+  
+  /* Viewport dimensions */
+  --viewport-width: 100vw;
+  --viewport-height: 100vh;
+}
+
+/* Prevent all default iOS behaviors */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Allow text selection in interactive elements */
+button,
+input,
+textarea,
+select,
+a,
+[role="button"],
+[role="link"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Fullscreen body layout */
+html {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: #fff;
+}
+
+body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  padding-top: var(--sat);
+  padding-left: var(--sal);
+  padding-right: var(--sar);
+  padding-bottom: var(--sab);
+  overflow: hidden;
+  background: #fff;
+  color: #1f2937;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Root container fullscreen */
+#root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Scrollable areas */
+[data-scrollable] {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Input fields - prevent zoom on input */
+input,
+textarea,
+select {
+  font-size: 16px;
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 8px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Remove focus outline for touch */
+button:focus,
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* Button styling - prevent default browser look */
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* Links */
+a {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-tap-highlight-color: transparent;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Images */
+img {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  pointer-events: none;
+}
+
+/* Prevent image context menu */
+img::after {
+  content: '';
+}
+
+/* iPad specific optimizations */
+@media (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2),
+       (device-width: 1024px) and (device-height: 768px) and (-webkit-device-pixel-ratio: 2) {
+  /* iPad 12.9-inch (3rd generation) and earlier */
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* iPad Pro 11-inch */
+@media (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2),
+       (device-width: 1194px) and (device-height: 834px) and (-webkit-device-pixel-ratio: 2) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* iPad Pro 12.9-inch (4th generation and newer) */
+@media (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2),
+       (device-width: 1366px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Landscape orientation */
+@media (orientation: landscape) {
+  body {
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  #root {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Portrait orientation */
+@media (orientation: portrait) {
+  body {
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  #root {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Tablet/iPad optimizations */
+@media (min-width: 768px) {
+  body {
+    font-size: 18px;
+  }
+  
+  button {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}
+
+/* Prevent white space at edges */
+html,
+body {
+  background-color: #ffffff;
+}
+
+/* Status bar compensation */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(var(--sal), 0);
+    padding-right: max(var(--sar), 0);
+    padding-top: max(var(--sat), 0);
+    padding-bottom: max(var(--sab), 0);
+  }
+}
+
+/* Hardware acceleration */
+body,
+#root {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+/* Prevent momentum scrolling issues */
+.page {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-scroll-behavior: smooth;
+  scroll-behavior: smooth;
+}
+
+/* High contrast for readability */
+@media (prefers-contrast: more) {
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    -webkit-animation-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    -webkit-animation-iteration-count: 1 !important;
+    animation-iteration-count: 1 !important;
+    -webkit-transition-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Attribute-based fullscreen indicator */
+[data-standalone="true"] {
+  --is-standalone: 1;
+}
+
+/* Utility classes */
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+.scrollable {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
