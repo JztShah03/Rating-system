@@ -74,8 +74,7 @@ export default function App() {
   console.log('Selected Technician in App.jsx:', selectedTechnician);  // Should print selected technician or null
 
   return (
-    <PasswordProtection>
-     Routes>
+    <Routes>
       {/* Route for Technician Selection */}
       <Route
         path="/"
@@ -104,5 +103,6 @@ export default function App() {
       
       {/* Catch-all route to redirect to Technician Selection Page */}
       <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes
+    </Routes>
+  );
 }
