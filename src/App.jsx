@@ -5,7 +5,6 @@ import AdminLogin from './pages/AdminLogin';
 import RatingPage from './pages/RatingPage';
 import TechnicianSelection from './pages/TechnicianSelection';
 import ThankYouPage from './pages/ThankYouPage';
-import PasswordProtection from './components/PasswordProtection';
 
 const SELECTED_TECHNICIAN_KEY = 'selectedTechnician';
 
@@ -76,36 +75,34 @@ export default function App() {
 
   return (
     <PasswordProtection>
-      <Routes>
-        {/* Route for Technician Selection */}
-        <Route
-          path="/"
-          element={<TechnicianSelection onSelectTechnician={appContext.handleSelectTechnician} />}
-        />
-        
-        {/* Route for Rating Page, shows selected technician's details */}
-        <Route
-          path="/rating"
-          element={
-            <RatingPage
-              selectedTechnician={appContext.selectedTechnician}
-              onClearTechnician={appContext.handleClearTechnician}
-            />
-          }
-        />
-        
-        {/* Route for Thank You Page */}
-        <Route
-          path="/thank-you"
-          element={<ThankYouPage onClearTechnician={appContext.handleClearTechnician} />}
-        />
-        
-        {/* Route for Admin Dashboard with authentication */}
-        <Route path="/admin" element={<AdminRoute />} />
-        
-        {/* Catch-all route to redirect to Technician Selection Page */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </PasswordProtection>
-  );
+     Routes>
+      {/* Route for Technician Selection */}
+      <Route
+        path="/"
+        element={<TechnicianSelection onSelectTechnician={appContext.handleSelectTechnician} />}
+      />
+      
+      {/* Route for Rating Page, shows selected technician's details */}
+      <Route
+        path="/rating"
+        element={
+          <RatingPage
+            selectedTechnician={appContext.selectedTechnician}
+            onClearTechnician={appContext.handleClearTechnician}
+          />
+        }
+      />
+      
+      {/* Route for Thank You Page */}
+      <Route
+        path="/thank-you"
+        element={<ThankYouPage onClearTechnician={appContext.handleClearTechnician} />}
+      />
+      
+      {/* Route for Admin Dashboard with authentication */}
+      <Route path="/admin" element={<AdminRoute />} />
+      
+      {/* Catch-all route to redirect to Technician Selection Page */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes
 }
