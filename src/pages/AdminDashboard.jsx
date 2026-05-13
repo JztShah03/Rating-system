@@ -19,13 +19,6 @@ import { formatAverage } from '../utils/ratingHelpers';
 
 
 
-function normalizeTimestamp(value) {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString();
-}
-
 function getRatingDate(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
@@ -119,9 +112,6 @@ export default function AdminDashboard({ onLogout }) {
     '4': item.counts[4],
     '5': item.counts[5]
   }));
-  const recentRecords = filteredRecords
-    .filter((record) => record.timestamp !== 'Timestamp' && record.technicianName !== 'Service Name')
-    .slice(0, 10);
 
   return (
     <main className="page page--dashboard">
@@ -301,37 +291,6 @@ export default function AdminDashboard({ onLogout }) {
                 </tbody>
               </table>
             </div>
-
-          <section className="table-card">
-            <div className="table-card__header">
-              <h2>Latest Rating Records</h2>
-              <p>Showing up to 10 most recent records based on the active filters.</p>
-            </div>
-            <div className="table-wrap">
-              <table>
-                <tbody>
-                  {recentRecords.map((record, index) => {
-                    const recordTechnician = record.technicianName || record.technicianId || 'Unknown';
-                    return (
-                      <tr key={`${record.timestamp}-${recordTechnician}-${index}`}>
-                        <td>{normalizeTimestamp(record.timestamp)}</td>
-                        <td>
-                          <strong>{recordTechnician}</strong>
-                        </td>
-                        <td>
-                          <strong>
-                            {record.emojiSelected} {record.ratingValue}/5
-                          </strong>
-                        </td>
-                        <td>{record.deviceType || 'Unknown'}</td>
-                        <td className="user-agent-cell">{record.userAgent || 'Unknown'}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </section>
           </section>
         </>
       ) : null}
