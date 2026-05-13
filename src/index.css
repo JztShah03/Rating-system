@@ -148,9 +148,11 @@ p {
 
 .technician-grid {
   display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   padding: 10px 0 30px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .technician-card {
@@ -161,11 +163,11 @@ p {
   box-shadow: var(--shadow-card);
   color: var(--text);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 16px;
-  min-height: 230px;
-  padding: 22px;
-  text-align: center;
+  min-height: 80px;
+  padding: 16px;
+  text-align: left;
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease,
@@ -181,16 +183,18 @@ p {
 
 .technician-card__image {
   aspect-ratio: 1;
-  border: 6px solid #f1f5f9;
+  border: 4px solid #f1f5f9;
   border-radius: 999px;
   box-shadow: inset 0 0 0 1px #e2e8f0;
   object-fit: cover;
-  width: 112px;
+  width: 60px;
+  flex-shrink: 0;
 }
 
 .technician-card__content h2 {
-  font-size: 1.2rem;
-  margin-bottom: 4px;
+  font-size: 1rem;
+  margin-bottom: 0;
+  font-weight: 600;
 }
 
 .technician-card__content p {

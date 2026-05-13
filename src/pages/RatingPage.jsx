@@ -56,8 +56,6 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
 
   return (
     <main className="page page--rating">
-      <BackButton onClick={handleBack} label="Select another ICT Service" />
-
       <motion.section
         className="rating-panel"
         initial={{ opacity: 0, y: 18 }}
