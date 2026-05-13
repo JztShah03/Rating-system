@@ -64,7 +64,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
       >
         <div className="selected-technician">
           <img src={selectedTechnician.image} alt={`${selectedTechnician.name} profile`} />
-          <div>
+          <div className="service-name-box">
             <h1>{selectedTechnician.name}</h1>
           </div>
         </div>

@@ -259,6 +259,20 @@ p {
   margin-bottom: 6px;
 }
 
+.service-name-box {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  box-shadow: var(--shadow-soft);
+}
+
+.service-name-box h1 {
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 600;
+}
+
 .selected-technician p {
   color: var(--primary);
   font-size: 1.05rem;

@@ -12,7 +12,7 @@ export default function TechnicianSelection({ onSelectTechnician }) {
         transition={{ duration: 0.35 }}
       >
         <span className="eyebrow">Service Feedback</span>
-        <h1>Select the service you received</h1>
+        <h2>Which service did you receive?</h2>
         <p>
           Your feedback helps us improve service quality and enhance customer experience.
         </p>
