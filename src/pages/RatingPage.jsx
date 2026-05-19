@@ -62,6 +62,8 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
       >
+        <BackButton onClick={handleBack} label="Go Back" />
+
         <div className="selected-technician">
           <img src={selectedTechnician.image} alt={`${selectedTechnician.name} profile`} />
           <div className="service-name-box">
