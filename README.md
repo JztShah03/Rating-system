@@ -1,6 +1,6 @@
 # Technician Rating System
 
-A polished, mobile-first customer feedback system for rating technician service quality. Customers select a technician, submit an emoji rating, and the record is saved into Google Sheets using a Google Apps Script Web App. Admin users can view analytics, charts, filters, and recent rating records.
+A polished, mobile-first user feedback system for rating technician service quality. Users select a technician, submit an emoji rating, and the record is saved into Google Sheets using a Google Apps Script Web App. Admin users can view analytics, charts, filters, and recent rating records.
 
 ## Tech Stack
 
@@ -17,8 +17,8 @@ A polished, mobile-first customer feedback system for rating technician service 
 
 | Route | Page | Purpose |
 |---|---|---|
-| `/` | Technician Selection | Customer selects one of 12 technicians. |
-| `/rating` | Rating Page | Customer rates the selected technician using emoji buttons. |
+| `/` | Technician Selection | User selects one of 12 technicians. |
+| `/rating` | Rating Page | User rates the selected technician using emoji buttons. |
 | `/thank-you` | Thank You Page | Shows confirmation and redirects back to `/` after countdown. |
 | `/admin` | Admin Login + Dashboard | Password-protected demo dashboard for analytics. |
 
@@ -155,10 +155,10 @@ npm run dev
 
 ## 5. Data Flow Explanation
 
-1. Customer opens `/` and selects a technician.
+1. User opens `/` and selects a technician.
 2. React stores the selected technician in React state and `localStorage`.
-3. Customer is redirected to `/rating`.
-4. Customer taps one emoji rating.
+3. User is redirected to `/rating`.
+4. User taps one emoji rating.
 5. React sends a POST request to the Google Apps Script Web App.
 6. Apps Script validates the rating and appends a new row into the `Ratings` sheet.
 7. On success, React redirects to `/thank-you`.
@@ -284,7 +284,7 @@ Check these first:
 6. The sheet tab is named `Ratings`, or the script has permission to create it.
 7. Browser console does not show a CORS or network error.
 
-Hard truth: if the Apps Script deployment is not public to “Anyone,” customer submissions will fail. This is the most common setup mistake.
+Hard truth: if the Apps Script deployment is not public to “Anyone,” user submissions will fail. This is the most common setup mistake.
 
 ### Admin dashboard is not loading
 
@@ -337,9 +337,9 @@ Weaknesses you must not ignore:
 4. **No anti-spam protection.** A malicious user could repeatedly submit fake ratings if they know the endpoint.
 5. **No rate limiting.** Apps Script and Google Sheets have quota limits.
 6. **Google Sheets is not a high-scale database.** It is fine for demos and small operations, but weak for high traffic.
-7. **User Agent is personal technical data.** Add a privacy notice if this is used with real customers.
+7. **User Agent is personal technical data.** Add a privacy notice if this is used with real users.
 8. **No audit trail for admin access.** Admin login is not logged.
-9. **No technician identity verification.** A customer can choose any technician manually.
+9. **No technician identity verification.** A user can choose any technician manually.
 
 Production hardening recommendations:
 

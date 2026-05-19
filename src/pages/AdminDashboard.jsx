@@ -185,7 +185,7 @@ export default function AdminDashboard({ onLogout }) {
       {!errorMessage && !isLoading && totalRatings === 0 ? (
         <section className="empty-state">
           <h2>No rating data yet</h2>
-          <p>Once customers submit ratings, analytics and recent records will appear here.</p>
+          <p>Once users submit ratings, analytics and recent records will appear here.</p>
         </section>
       ) : null}
 

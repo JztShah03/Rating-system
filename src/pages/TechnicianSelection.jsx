@@ -14,7 +14,7 @@ export default function TechnicianSelection({ onSelectTechnician }) {
         <span className="eyebrow">Service Feedback</span>
         <h2>Which service did you receive?</h2>
         <p>
-          Your feedback helps us improve service quality and enhance customer experience.
+          Your feedback helps us improve service quality and enhance user experience.
         </p>
       </motion.section>
 
