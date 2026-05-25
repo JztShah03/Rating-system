@@ -36,6 +36,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
     setBurstKey(Date.now());
 
     const campus = await getCampusByIp();
+    const ip = await (await import('../utils/campusHelpers')).getPublicIp();
 
     onClearTechnician();
     navigate('/thank-you', { replace: true });
@@ -47,7 +48,8 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
       emojiSelected: option.emoji,
       deviceType: getDeviceType(),
       userAgent: getUserAgent(),
-      campus
+      campus,
+      ip
     }).catch((error) => {
       console.error(error);
     });

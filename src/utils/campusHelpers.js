@@ -25,3 +25,15 @@ export async function getCampusByIp() {
     return '';
   }
 }
+
+export async function getPublicIp() {
+  try {
+    const response = await fetch(IPIFY_URL, { cache: 'no-store' });
+    if (!response.ok) return '';
+    const data = await response.json();
+    return String(data.ip || '').trim();
+  } catch (error) {
+    console.warn('IP lookup failed:', error);
+    return '';
+  }
+}

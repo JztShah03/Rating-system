@@ -237,6 +237,37 @@ export default function AdminDashboard({ onLogout }) {
             />
           </section>
 
+          <section className="recent-table">
+            <div className="table-card__header">
+              <h2>Recent Ratings</h2>
+              <p>Latest submitted ratings with campus and user info.</p>
+            </div>
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>ICT Service</th>
+                    <th>Rating</th>
+                    <th>Campus</th>
+                    <th>IP / User Agent</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredRecords.slice(0, 25).map((r, idx) => (
+                    <tr key={`${r.timestamp}-${idx}`}>
+                      <td>{new Date(r.timestamp).toLocaleString()}</td>
+                      <td>{r.technicianName}</td>
+                      <td>{r.ratingValue} {r.ratingLabel ? `(${r.ratingLabel})` : ''}</td>
+                      <td>{r.campus || '—'}</td>
+                      <td>{r.ip ? r.ip : r.userAgent}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
           <section className="charts-grid">
             <AdminChart title="Rating Breakdown by Service">
               <ResponsiveContainer width="100%" height={360}>
