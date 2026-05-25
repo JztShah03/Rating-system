@@ -24,11 +24,11 @@ function getRatingDate(value) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function normalizeCampus(value) {
-  const campus = String(value || '').trim().toLowerCase();
-  if (campus.includes('ep')) return 'EP Campus';
-  if (campus.includes('jb')) return 'JB Campus';
-  return '';
+function normalizeBranch(value) {
+  const branch = String(value || '').trim().toUpperCase();
+  if (branch === 'EP' || branch === 'EP CAMPUS') return 'EP';
+  if (branch === 'JB' || branch === 'JB CAMPUS') return 'JB';
+  return 'Unknown';
 }
 
 function buildTechnicianSummary(records) {
@@ -62,7 +62,7 @@ export default function AdminDashboard({ onLogout }) {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [technicianFilter, setTechnicianFilter] = useState('all');
-  const [campusFilter, setCampusFilter] = useState('all');
+  const [branchFilter, setBranchFilter] = useState('all');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
@@ -86,6 +86,11 @@ export default function AdminDashboard({ onLogout }) {
     loadData();
   }, [loadData]);
 
+  useEffect(() => {
+    const intervalId = window.setInterval(loadData, 30000);
+    return () => window.clearInterval(intervalId);
+  }, [loadData]);
+
   const filteredRecords = useMemo(() => {
     return records.filter((record) => {
       const recordTechnician = String(record.technicianName || record.technicianId);
@@ -93,12 +98,12 @@ export default function AdminDashboard({ onLogout }) {
       const recordDate = getRatingDate(record.timestamp);
       const matchesStart = !startDate || (recordDate && recordDate >= new Date(`${startDate}T00:00:00`));
       const matchesEnd = !endDate || (recordDate && recordDate <= new Date(`${endDate}T23:59:59`));
-      const recordCampus = normalizeCampus(record.campus);
-      const matchesCampus = campusFilter === 'all' || recordCampus === campusFilter;
+      const recordBranch = normalizeBranch(record.branchLocation);
+      const matchesBranch = branchFilter === 'all' || recordBranch === branchFilter;
 
-      return matchesTechnician && matchesCampus && matchesStart && matchesEnd;
+      return matchesTechnician && matchesBranch && matchesStart && matchesEnd;
     });
-  }, [campusFilter, endDate, records, startDate, technicianFilter]);
+  }, [branchFilter, endDate, records, startDate, technicianFilter]);
 
   const totalRatings = filteredRecords.length;
   const ratingSum = filteredRecords.reduce((sum, record) => sum + Number(record.ratingValue || 0), 0);
@@ -109,15 +114,35 @@ export default function AdminDashboard({ onLogout }) {
     ? technicianSummary
     : technicianSummary.filter((item) => item.technicianName === technicianFilter);
 
-  const campusSummaryData = useMemo(() => {
-    const campusCounts = filteredRecords.reduce((acc, record) => {
-      const campus = normalizeCampus(record.campus);
-      if (!campus) return acc;
-      acc[campus] = (acc[campus] || 0) + 1;
+  const branchSummaryData = useMemo(() => {
+    const branchCounts = filteredRecords.reduce((acc, record) => {
+      const branch = normalizeBranch(record.branchLocation);
+      if (!branch) return acc;
+      acc[branch] = (acc[branch] || 0) + 1;
       return acc;
     }, {});
 
-    return Object.entries(campusCounts).map(([campus, total]) => ({ campus, total }));
+    return Object.entries(branchCounts).map(([branch, total]) => ({ branch, total }));
+  }, [filteredRecords]);
+
+  const branchAverageData = useMemo(() => {
+    const branchStats = filteredRecords.reduce((acc, record) => {
+      const branch = normalizeBranch(record.branchLocation);
+      const value = Number(record.ratingValue || 0);
+
+      if (!acc[branch]) {
+        acc[branch] = { total: 0, count: 0 };
+      }
+
+      acc[branch].total += value;
+      acc[branch].count += 1;
+      return acc;
+    }, {});
+
+    return Object.entries(branchStats).map(([branch, stats]) => ({
+      branch,
+      average: stats.count ? Number((stats.total / stats.count).toFixed(2)) : 0
+    }));
   }, [filteredRecords]);
 
   const bestTechnician = activeTechnicians.length
@@ -166,11 +191,12 @@ export default function AdminDashboard({ onLogout }) {
           </select>
         </label>
         <label>
-          Campus
-          <select value={campusFilter} onChange={(event) => setCampusFilter(event.target.value)}>
-            <option value="all">All Campuses</option>
-            <option value="EP Campus">EP Campus</option>
-            <option value="JB Campus">JB Campus</option>
+          Branch
+          <select value={branchFilter} onChange={(event) => setBranchFilter(event.target.value)}>
+            <option value="all">All Branches</option>
+            <option value="EP">EP</option>
+            <option value="JB">JB</option>
+            <option value="Unknown">Unknown</option>
           </select>
         </label>
         <label>
@@ -186,7 +212,7 @@ export default function AdminDashboard({ onLogout }) {
           type="button"
           onClick={() => {
             setTechnicianFilter('all');
-            setCampusFilter('all');
+            setBranchFilter('all');
             setStartDate('');
             setEndDate('');
           }}
@@ -283,7 +309,43 @@ export default function AdminDashboard({ onLogout }) {
               </ResponsiveContainer>
             </AdminChart>
 
-            {/* Campus chart removed per request */}
+            <AdminChart title="Ratings by Branch">
+              <ResponsiveContainer width="100%" height={360}>
+                <BarChart data={branchSummaryData} margin={{ top: 20, right: 20, left: 0, bottom: 70 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis
+                    dataKey="branch"
+                    angle={-35}
+                    textAnchor="end"
+                    interval={0}
+                    height={90}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="total" name="Ratings" fill="#2563eb" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </AdminChart>
+
+            <AdminChart title="Average Rating by Branch">
+              <ResponsiveContainer width="100%" height={360}>
+                <BarChart data={branchAverageData} margin={{ top: 20, right: 20, left: 0, bottom: 70 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis
+                    dataKey="branch"
+                    angle={-35}
+                    textAnchor="end"
+                    interval={0}
+                    height={90}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis domain={[0, 5]} allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="average" name="Average Rating" fill="#10b981" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </AdminChart>
 
           </section>
 

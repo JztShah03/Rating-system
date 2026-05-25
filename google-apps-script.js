@@ -23,19 +23,20 @@ const HEADERS = [
   'Rating Label',
   'Emoji Selected',
   'Device Type',
-  'Campus',
-  'User Agent'
+  'Branch Location',
+  'User Agent',
+  'ipAddress'
 ];
 
-const IP_TO_CAMPUS = {
-  '121.120.81.3': 'EP Campus',
-  '121.120.98.130': 'JB Campus'
-};
-
-function mapIpToCampus_(ip) {
-  if (!ip) return '';
-  const value = String(ip).trim();
-  return IP_TO_CAMPUS[value] || '';
+function identifyBranch_(ipAddress) {
+  const ip = String(ipAddress || '').trim();
+  if (ip === '121.120.98.130') {
+    return 'EP';
+  }
+  if (ip === '121.120.81.3') {
+    return 'JB';
+  }
+  return 'Unknown';
 }
 
 function doGet(e) {
@@ -73,11 +74,8 @@ function doPost(e) {
     const payload = parsePayload_(e);
     validatePayload_(payload);
 
-    // Determine campus: prefer provided value, fall back to known IP map
-    let campusValue = String(payload.campus || '').trim();
-    if (!campusValue) {
-      campusValue = mapIpToCampus_(payload.ip || payload.clientIp || payload.remoteAddr || '');
-    }
+    var ipAddress = String(payload.ip || payload.ipAddress || payload.clientIp || payload.remoteAddr || '').trim();
+    var branchLocation = identifyBranch_(ipAddress);
 
     const sheet = getOrCreateRatingsSheet_();
     sheet.appendRow([
@@ -87,8 +85,9 @@ function doPost(e) {
       String(payload.ratingLabel || '').trim(),
       String(payload.emojiSelected || '').trim(),
       String(payload.deviceType || '').trim(),
-      campusValue,
-      String(payload.userAgent || '').trim()
+      branchLocation,
+      String(payload.userAgent || '').trim(),
+      ipAddress
     ]);
 
     return outputResponse_({
@@ -211,7 +210,7 @@ function readRatings_(sheet) {
         ratingLabel: row[3],
         emojiSelected: row[4],
         deviceType: row[5],
-        campus: String(row[6] || '').trim(),
+        branchLocation: String(row[6] || '').trim(),
         userAgent: row[7]
       };
     });
