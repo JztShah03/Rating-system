@@ -24,6 +24,13 @@ function getRatingDate(value) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+function normalizeCampus(value) {
+  const campus = String(value || '').trim().toLowerCase();
+  if (campus.includes('ep')) return 'EP Campus';
+  if (campus.includes('jb')) return 'JB Campus';
+  return '';
+}
+
 function buildTechnicianSummary(records) {
   return technicians.map((technician) => {
     const technicianRecords = records.filter((record) => {
@@ -86,7 +93,7 @@ export default function AdminDashboard({ onLogout }) {
       const recordDate = getRatingDate(record.timestamp);
       const matchesStart = !startDate || (recordDate && recordDate >= new Date(`${startDate}T00:00:00`));
       const matchesEnd = !endDate || (recordDate && recordDate <= new Date(`${endDate}T23:59:59`));
-      const recordCampus = String(record.campus || '').trim() || 'Other';
+      const recordCampus = normalizeCampus(record.campus);
       const matchesCampus = campusFilter === 'all' || recordCampus === campusFilter;
 
       return matchesTechnician && matchesCampus && matchesStart && matchesEnd;
@@ -104,7 +111,8 @@ export default function AdminDashboard({ onLogout }) {
 
   const campusSummaryData = useMemo(() => {
     const campusCounts = filteredRecords.reduce((acc, record) => {
-      const campus = String(record.campus || '').trim() || 'Other';
+      const campus = normalizeCampus(record.campus);
+      if (!campus) return acc;
       acc[campus] = (acc[campus] || 0) + 1;
       return acc;
     }, {});
@@ -163,7 +171,6 @@ export default function AdminDashboard({ onLogout }) {
             <option value="all">All Campuses</option>
             <option value="EP Campus">EP Campus</option>
             <option value="JB Campus">JB Campus</option>
-            <option value="Other">Other</option>
           </select>
         </label>
         <label>
@@ -276,17 +283,7 @@ export default function AdminDashboard({ onLogout }) {
               </ResponsiveContainer>
             </AdminChart>
 
-            <AdminChart title="Campus Rating Distribution">
-              <ResponsiveContainer width="100%" height={360}>
-                <BarChart data={campusSummaryData} margin={{ top: 20, right: 20, left: 0, bottom: 70 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="campus" angle={-35} textAnchor="end" interval={0} height={90} tick={{ fontSize: 12 }} />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="total" name="Ratings" fill="#2563eb" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </AdminChart>
+            {/* Campus chart removed per request */}
 
           </section>
 

@@ -7,7 +7,7 @@ const CAMPUS_IP_MAP = {
 
 export function mapIpToCampus(ip) {
   const cleanIp = String(ip || '').trim();
-  return CAMPUS_IP_MAP[cleanIp] || 'Other';
+  return CAMPUS_IP_MAP[cleanIp] || '';
 }
 
 export async function getCampusByIp() {
@@ -15,13 +15,13 @@ export async function getCampusByIp() {
     const response = await fetch(IPIFY_URL, { cache: 'no-store' });
 
     if (!response.ok) {
-      return 'Other';
+      return '';
     }
 
     const data = await response.json();
     return mapIpToCampus(data.ip);
   } catch (error) {
     console.warn('Campus IP lookup failed:', error);
-    return 'Other';
+    return '';
   }
 }
