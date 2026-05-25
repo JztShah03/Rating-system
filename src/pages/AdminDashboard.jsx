@@ -91,7 +91,7 @@ export default function AdminDashboard({ onLogout }) {
 
       return matchesTechnician && matchesCampus && matchesStart && matchesEnd;
     });
-  }, [endDate, records, startDate, technicianFilter]);
+  }, [campusFilter, endDate, records, startDate, technicianFilter]);
 
   const totalRatings = filteredRecords.length;
   const ratingSum = filteredRecords.reduce((sum, record) => sum + Number(record.ratingValue || 0), 0);
