@@ -20,11 +20,23 @@ const HEADERS = [
   'Timestamp',
   'Technician Name',
   'Rating Value',
+  'Rating Label',
   'Emoji Selected',
   'Device Type',
-  'User Agent',
-  'Campus'
+  'Campus',
+  'User Agent'
 ];
+
+const IP_TO_CAMPUS = {
+  '121.120.81.3': 'EP Campus',
+  '121.120.98.130': 'JB Campus'
+};
+
+function mapIpToCampus_(ip) {
+  if (!ip) return '';
+  const value = String(ip).trim();
+  return IP_TO_CAMPUS[value] || '';
+}
 
 function doGet(e) {
   try {
@@ -61,15 +73,22 @@ function doPost(e) {
     const payload = parsePayload_(e);
     validatePayload_(payload);
 
+    // Determine campus: prefer provided value, fall back to known IP map
+    let campusValue = String(payload.campus || '').trim();
+    if (!campusValue) {
+      campusValue = mapIpToCampus_(payload.ip || payload.clientIp || payload.remoteAddr || '');
+    }
+
     const sheet = getOrCreateRatingsSheet_();
     sheet.appendRow([
       new Date(),
       String(payload.technicianName).trim(),
       Number(payload.ratingValue),
+      String(payload.ratingLabel || '').trim(),
       String(payload.emojiSelected || '').trim(),
       String(payload.deviceType || '').trim(),
-      String(payload.userAgent || '').trim(),
-      String(payload.campus || '').trim()
+      campusValue,
+      String(payload.userAgent || '').trim()
     ]);
 
     return outputResponse_({
@@ -189,10 +208,11 @@ function readRatings_(sheet) {
         timestamp: formatTimestamp_(row[0]),
         technicianName: row[1],
         ratingValue: Number(row[2]),
-        emojiSelected: row[3],
-        deviceType: row[4],
-        userAgent: row[5],
-        campus: String(row[6] || '').trim()
+        ratingLabel: row[3],
+        emojiSelected: row[4],
+        deviceType: row[5],
+        campus: String(row[6] || '').trim(),
+        userAgent: row[7]
       };
     });
 }
