@@ -1,16 +1,16 @@
 const IPIFY_URL = 'https://api.ipify.org?format=json';
 
-const BRANCH_IP_MAP = {
-  '121.120.98.130': 'EP',
-  '121.120.81.3': 'JB'
+const CAMPUS_IP_MAP = {
+  '121.120.98.130': 'EP Campus',
+  '121.120.81.3': 'JB Campus'
 };
 
-export function mapIpToBranch(ip) {
+export function mapIpToCampus(ip) {
   const cleanIp = String(ip || '').trim();
-  return BRANCH_IP_MAP[cleanIp] || 'Unknown';
+  return CAMPUS_IP_MAP[cleanIp] || 'Unknown';
 }
 
-export async function getBranchByIp() {
+export async function getCampus() {
   try {
     const response = await fetch(IPIFY_URL, { cache: 'no-store' });
 
@@ -19,21 +19,9 @@ export async function getBranchByIp() {
     }
 
     const data = await response.json();
-    return mapIpToBranch(data.ip);
+    return mapIpToCampus(data.ip);
   } catch (error) {
-    console.warn('Branch IP lookup failed:', error);
+    console.error('IP Detection Failed:', error);
     return 'Unknown';
-  }
-}
-
-export async function getPublicIp() {
-  try {
-    const response = await fetch(IPIFY_URL, { cache: 'no-store' });
-    if (!response.ok) return '';
-    const data = await response.json();
-    return String(data.ip || '').trim();
-  } catch (error) {
-    console.warn('IP lookup failed:', error);
-    return '';
   }
 }

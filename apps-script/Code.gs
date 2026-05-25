@@ -11,21 +11,9 @@ var HEADERS = [
   'Rating Label',
   'Emoji Selected',
   'Device Type',
-  'Branch Location',
-  'User Agent',
-  'ipAddress'
+  'Campus',
+  'User Agent'
 ];
-
-function identifyBranch_(ipAddress) {
-  var ip = String(ipAddress || '').trim();
-  if (ip === '121.120.98.130') {
-    return 'EP';
-  }
-  if (ip === '121.120.81.3') {
-    return 'JB';
-  }
-  return 'Unknown';
-}
 
 function doGet(e) {
   try {
@@ -62,8 +50,7 @@ function doPost(e) {
     var payload = parsePayload_(e);
     validatePayload_(payload);
 
-    var ipAddress = String(payload.ipAddress || payload.ip || payload.clientIp || payload.remoteAddr || '').trim();
-    var branchLocation = identifyBranch_(ipAddress);
+    var campusValue = String(payload.campus || '').trim() || 'Unknown';
 
     var sheet = getOrCreateRatingsSheet_();
     sheet.appendRow([
@@ -73,9 +60,8 @@ function doPost(e) {
       String(payload.ratingLabel || '').trim(),
       String(payload.emojiSelected || '').trim(),
       String(payload.deviceType || '').trim(),
-      branchLocation,
-      String(payload.userAgent || '').trim(),
-      ipAddress
+      campusValue,
+      String(payload.userAgent || '').trim()
     ]);
 
     return outputResponse_({

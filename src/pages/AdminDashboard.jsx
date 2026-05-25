@@ -98,7 +98,7 @@ export default function AdminDashboard({ onLogout }) {
       const recordDate = getRatingDate(record.timestamp);
       const matchesStart = !startDate || (recordDate && recordDate >= new Date(`${startDate}T00:00:00`));
       const matchesEnd = !endDate || (recordDate && recordDate <= new Date(`${endDate}T23:59:59`));
-      const recordBranch = normalizeBranch(record.branchLocation);
+      const recordBranch = normalizeBranch(record.campus);
       const matchesBranch = branchFilter === 'all' || recordBranch === branchFilter;
 
       return matchesTechnician && matchesBranch && matchesStart && matchesEnd;
@@ -116,7 +116,7 @@ export default function AdminDashboard({ onLogout }) {
 
   const branchSummaryData = useMemo(() => {
     const branchCounts = filteredRecords.reduce((acc, record) => {
-      const branch = normalizeBranch(record.branchLocation);
+      const branch = normalizeBranch(record.campus);
       if (!branch) return acc;
       acc[branch] = (acc[branch] || 0) + 1;
       return acc;
@@ -127,7 +127,7 @@ export default function AdminDashboard({ onLogout }) {
 
   const branchAverageData = useMemo(() => {
     const branchStats = filteredRecords.reduce((acc, record) => {
-      const branch = normalizeBranch(record.branchLocation);
+      const branch = normalizeBranch(record.campus);
       const value = Number(record.ratingValue || 0);
 
       if (!acc[branch]) {
