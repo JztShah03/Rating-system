@@ -22,7 +22,8 @@ const HEADERS = [
   'Rating Value',
   'Emoji Selected',
   'Device Type',
-  'User Agent'
+  'User Agent',
+  'Campus'
 ];
 
 function doGet(e) {
@@ -67,7 +68,8 @@ function doPost(e) {
       Number(payload.ratingValue),
       String(payload.emojiSelected || '').trim(),
       String(payload.deviceType || '').trim(),
-      String(payload.userAgent || '').trim()
+      String(payload.userAgent || '').trim(),
+      String(payload.campus || '').trim()
     ]);
 
     return outputResponse_({
@@ -185,7 +187,8 @@ function readRatings_(sheet) {
         ratingValue: Number(row[2]),
         emojiSelected: row[3],
         deviceType: row[4],
-        userAgent: row[5]
+        userAgent: row[5],
+        campus: String(row[6] || '').trim()
       };
     });
 }

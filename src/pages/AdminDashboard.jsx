@@ -55,6 +55,7 @@ export default function AdminDashboard({ onLogout }) {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [technicianFilter, setTechnicianFilter] = useState('all');
+  const [campusFilter, setCampusFilter] = useState('all');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
@@ -85,8 +86,10 @@ export default function AdminDashboard({ onLogout }) {
       const recordDate = getRatingDate(record.timestamp);
       const matchesStart = !startDate || (recordDate && recordDate >= new Date(`${startDate}T00:00:00`));
       const matchesEnd = !endDate || (recordDate && recordDate <= new Date(`${endDate}T23:59:59`));
+      const recordCampus = String(record.campus || '').trim() || 'Other';
+      const matchesCampus = campusFilter === 'all' || recordCampus === campusFilter;
 
-      return matchesTechnician && matchesStart && matchesEnd;
+      return matchesTechnician && matchesCampus && matchesStart && matchesEnd;
     });
   }, [endDate, records, startDate, technicianFilter]);
 
@@ -98,6 +101,17 @@ export default function AdminDashboard({ onLogout }) {
   const filteredTechnicianSummary = technicianFilter === 'all'
     ? technicianSummary
     : technicianSummary.filter((item) => item.technicianName === technicianFilter);
+
+  const campusSummaryData = useMemo(() => {
+    const campusCounts = filteredRecords.reduce((acc, record) => {
+      const campus = String(record.campus || '').trim() || 'Other';
+      acc[campus] = (acc[campus] || 0) + 1;
+      return acc;
+    }, {});
+
+    return Object.entries(campusCounts).map(([campus, total]) => ({ campus, total }));
+  }, [filteredRecords]);
+
   const bestTechnician = activeTechnicians.length
     ? [...activeTechnicians].sort((a, b) => b.average - a.average || b.total - a.total)[0]
     : null;
@@ -144,6 +158,15 @@ export default function AdminDashboard({ onLogout }) {
           </select>
         </label>
         <label>
+          Campus
+          <select value={campusFilter} onChange={(event) => setCampusFilter(event.target.value)}>
+            <option value="all">All Campuses</option>
+            <option value="EP Campus">EP Campus</option>
+            <option value="JB Campus">JB Campus</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label>
           Start date
           <input type="date" value={startDate} onChange={(event) => setStartDate(event.target.value)} />
         </label>
@@ -156,6 +179,7 @@ export default function AdminDashboard({ onLogout }) {
           type="button"
           onClick={() => {
             setTechnicianFilter('all');
+            setCampusFilter('all');
             setStartDate('');
             setEndDate('');
           }}
@@ -248,6 +272,18 @@ export default function AdminDashboard({ onLogout }) {
                   <YAxis allowDecimals={false} />
                   <Tooltip />
                   <Bar dataKey="total" name="Total Ratings" fill="#0f766e" radius={[8, 8, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </AdminChart>
+
+            <AdminChart title="Campus Rating Distribution">
+              <ResponsiveContainer width="100%" height={360}>
+                <BarChart data={campusSummaryData} margin={{ top: 20, right: 20, left: 0, bottom: 70 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="campus" angle={-35} textAnchor="end" interval={0} height={90} tick={{ fontSize: 12 }} />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar dataKey="total" name="Ratings" fill="#2563eb" radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </AdminChart>

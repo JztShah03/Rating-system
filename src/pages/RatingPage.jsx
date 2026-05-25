@@ -6,6 +6,7 @@ import EmojiBurst from '../components/EmojiBurst';
 import RatingButton from '../components/RatingButton';
 import { saveRating } from '../services/googleSheetService';
 import { getDeviceType, getUserAgent } from '../utils/deviceHelpers';
+import { getCampusByIp } from '../utils/campusHelpers';
 import { ratingOptions } from '../utils/ratingHelpers';
 
 export default function RatingPage({ selectedTechnician, onClearTechnician }) {
@@ -25,7 +26,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
 
   if (!selectedTechnician) return null;
 
-  function handleSubmit(option) {
+  async function handleSubmit(option) {
     if (isSaving) return;
 
     setIsSaving(true);
@@ -33,6 +34,8 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
     setLastAttempt(option);
     setErrorMessage('');
     setBurstKey(Date.now());
+
+    const campus = await getCampusByIp();
 
     onClearTechnician();
     navigate('/thank-you', { replace: true });
@@ -43,7 +46,8 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
       ratingLabel: option.label,
       emojiSelected: option.emoji,
       deviceType: getDeviceType(),
-      userAgent: getUserAgent()
+      userAgent: getUserAgent(),
+      campus
     }).catch((error) => {
       console.error(error);
     });
