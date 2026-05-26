@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rating Service System | Rate Technician</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="rating">
+  <button class="back-button" type="button" data-back-home aria-label="Back to technician selection">
+    <span aria-hidden="true">←</span>
+  </button>
+
+  <main class="page-shell rating-shell">
+    <section class="content-card rating-card">
+      <div id="selectedTechnician" class="selected-technician" aria-live="polite"></div>
+
+      <div class="rating-heading">
+        <div class="eyebrow">Rate Our Service</div>
+        <h1>How was your experience?</h1>
+        <p class="muted">Tap one emoji below. Your rating will be saved automatically.</p>
+      </div>
+
+      <div id="ratingOptions" class="rating-options" aria-label="Rating options"></div>
+
+      <div id="submissionStatus" class="status-panel" role="status" aria-live="polite"></div>
+      <button id="retryButton" class="button button-secondary is-hidden" type="button">Retry submission</button>
+    </section>
+  </main>
+
+  <div id="burstLayer" class="burst-layer" aria-hidden="true"></div>
+  <script src="script.js"></script>
+</body>
+</html>
