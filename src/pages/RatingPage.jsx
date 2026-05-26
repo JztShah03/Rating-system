@@ -6,6 +6,7 @@ import EmojiBurst from '../components/EmojiBurst';
 import RatingButton from '../components/RatingButton';
 import { saveRating } from '../services/googleSheetService';
 import { getDeviceType, getUserAgent } from '../utils/deviceHelpers';
+import { getCampus } from '../utils/campusHelpers';
 import { ratingOptions } from '../utils/ratingHelpers';
 
 export default function RatingPage({ selectedTechnician, onClearTechnician }) {
@@ -15,6 +16,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [lastAttempt, setLastAttempt] = useState(null);
   const [burstKey, setBurstKey] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     if (!selectedTechnician) {
@@ -33,23 +35,22 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
     setErrorMessage('');
     setBurstKey(Date.now());
 
-    try {
-      await saveRating({
-        technicianId: selectedTechnician.id,
-        technicianName: selectedTechnician.name,
-        ratingValue: option.value,
-        ratingLabel: option.label,
-        emojiSelected: option.emoji,
-        deviceType: getDeviceType(),
-        userAgent: getUserAgent()
-      });
+    const campus = await getCampus();
 
-      navigate('/thank-you', { replace: true });
-    } catch (error) {
+    onClearTechnician();
+    navigate('/thank-you', { replace: true });
+
+    saveRating({
+      technicianName: selectedTechnician.name,
+      ratingValue: option.value,
+      ratingLabel: option.label,
+      emojiSelected: option.emoji,
+      deviceType: getDeviceType(),
+      campus,
+      userAgent: getUserAgent()
+    }).catch((error) => {
       console.error(error);
-      setErrorMessage('Unable to save your rating. Please try again.');
-      setIsSaving(false);
-    }
+    });
   }
 
   function handleBack() {
@@ -59,25 +60,23 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
 
   return (
     <main className="page page--rating">
-      <BackButton onClick={handleBack} label="Select another ICT Staff" />
-
       <motion.section
         className="rating-panel"
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
       >
+        <BackButton onClick={handleBack} label="Go Back" />
+
         <div className="selected-technician">
           <img src={selectedTechnician.image} alt={`${selectedTechnician.name} profile`} />
-          <div>
-            <span className="eyebrow">You selected</span>
+          <div className="service-name-box">
             <h1>{selectedTechnician.name}</h1>
-            <p>{selectedTechnician.id}</p>
           </div>
         </div>
 
         <div className="rating-copy">
-          <h2>How was my service?</h2>
+          <h2>How was the service?</h2>
           <p>Please rate based on the service quality you received today.</p>
         </div>
 
@@ -98,18 +97,6 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
         </div>
 
         <AnimatePresence>
-          {isSaving && !errorMessage ? (
-            <motion.div
-              className="status-message status-message--saving"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-            >
-              <span className="spinner" aria-hidden="true" />     Thank you, we appreciate your evaluation!
-
-            </motion.div>
-          ) : null}
-
           {errorMessage ? (
             <motion.div
               className="status-message status-message--error"
@@ -126,6 +113,28 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
           ) : null}
         </AnimatePresence>
       </motion.section>
+
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            className="success-modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="success-modal"
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 260 }}
+            >
+              <div className="success-modal__icon">&#10003;</div>
+              <h2>Thank you, we appreciate your evaluation!</h2>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

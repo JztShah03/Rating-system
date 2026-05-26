@@ -1,24 +1,10 @@
 export const ratingOptions = [
   {
-    value: 1,
-    label: 'Very Unsatisfied',
-    emoji: '😡',
-    color: '#ef4444',
-    background: '#fef2f2'
-  },
-  {
-    value: 2,
-    label: 'Unsatisfied',
-    emoji: '🙁',
-    color: '#f97316',
-    background: '#fff7ed'
-  },
-  {
-    value: 3,
-    label: 'Neutral',
-    emoji: '😐',
-    color: '#eab308',
-    background: '#fefce8'
+    value: 5,
+    label: 'Excellent',
+    emoji: '😄',
+    color: '#22c55e',
+    background: '#f0fdf4'
   },
   {
     value: 4,
@@ -28,11 +14,25 @@ export const ratingOptions = [
     background: '#f7fee7'
   },
   {
-    value: 5,
-    label: 'Excellent',
-    emoji: '😄',
-    color: '#22c55e',
-    background: '#f0fdf4'
+    value: 3,
+    label: 'Neutral',
+    emoji: '😐',
+    color: '#eab308',
+    background: '#fefce8'
+  },
+  {
+    value: 2,
+    label: 'Unsatisfied',
+    emoji: '🙁',
+    color: '#f97316',
+    background: '#fff7ed'
+  },
+  {
+    value: 1,
+    label: 'Very Unsatisfied',
+    emoji: '😡',
+    color: '#ef4444',
+    background: '#fef2f2'
   }
 ];
 

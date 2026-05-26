@@ -2,15 +2,100 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Viewport optimization for iPad kiosk fullscreen mode -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui" />
+    
+    <!-- General PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#2563eb" />
+    
+    <!-- Apple iOS PWA Meta Tags for Fullscreen Kiosk Mode -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Tech Rating" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <!-- Prevent pull-to-refresh and unwanted gestures -->
+    <meta name="apple-mobile-web-app-scroll-bounce" content="no" />
+    
+    <!-- Windows / Microsoft Tile -->
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    
+    <!-- Description and Keywords -->
     <meta
       name="description"
-      content="Customer technician service quality rating system with Google Sheets backend and admin dashboard."
+      content="iPad Kiosk Rating System - User technician service quality rating with fullscreen standalone mode."
     />
+    <meta name="keywords" content="rating, service, kiosk, ipad, pwa, technician" />
+    
+    <!-- Manifest and Icons -->
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="/pwa-kiosk.css" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="mask-icon" href="/apple-touch-icon.png" color="#2563eb" />
+    
+    <!-- iOS Launch Screen Splash -->
+    <link rel="apple-touch-startup-image" href="/splash-1024x768.png" media="screen and (device-width: 1024px) and (device-height: 768px) and (-webkit-device-pixel-ratio: 2)" />
+    <link rel="apple-touch-startup-image" href="/splash-768x1024.png" media="screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)" />
+    
+    <!-- Disable automatic phone number detection -->
+    <meta name="format-detection" content="telephone=no,email=no,address=no" />
+    
+    <!-- Prevent data detector from creating links -->
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Fullscreen on iPad -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    
     <title>Technician Rating System</title>
+    <style>
+      /* Prevent default iOS behaviors */
+      * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      
+      html, body {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        -webkit-font-smoothing: antialiased;
+      }
+      
+      #root {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        -webkit-user-select: text;
+        user-select: text;
+      }
+      
+      /* Prevent zoom on double tap */
+      input, textarea, select {
+        font-size: 16px;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <!-- PWA and Kiosk Mode Initialization Script -->
+    <script src="/pwa-kiosk-init.js" defer></script>
   </body>
 </html>
