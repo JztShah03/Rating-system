@@ -15,13 +15,14 @@ export async function getCampus() {
     const response = await fetch(IPIFY_URL, { cache: 'no-store' });
 
     if (!response.ok) {
-      return 'Unknown';
+      return { campus: 'Unknown', rawIp: '' };
     }
 
     const data = await response.json();
-    return mapIpToCampus(data.ip);
+    const rawIp = String(data.ip || '').trim();
+    return { campus: mapIpToCampus(rawIp), rawIp };
   } catch (error) {
     console.error('IP Detection Failed:', error);
-    return 'Unknown';
+    return { campus: 'Unknown', rawIp: '' };
   }
 }

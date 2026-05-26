@@ -35,7 +35,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
     setErrorMessage('');
     setBurstKey(Date.now());
 
-    const campus = await getCampus();
+    const { campus, rawIp } = await getCampus();
 
     onClearTechnician();
     navigate('/thank-you', { replace: true });
@@ -47,6 +47,7 @@ export default function RatingPage({ selectedTechnician, onClearTechnician }) {
       emojiSelected: option.emoji,
       deviceType: getDeviceType(),
       campus,
+      rawIp,
       userAgent: getUserAgent()
     }).catch((error) => {
       console.error(error);

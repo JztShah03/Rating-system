@@ -24,6 +24,7 @@ const HEADERS = [
   'Emoji Selected',
   'Device Type',
   'Campus',
+  'Client IP',
   'User Agent'
 ];
 
@@ -63,6 +64,7 @@ function doPost(e) {
     validatePayload_(payload);
 
     const campusValue = String(payload.campus || '').trim() || 'Unknown';
+    const rawIpValue = String(payload.rawIp || '').trim();
 
     const sheet = getOrCreateRatingsSheet_();
     sheet.appendRow([
@@ -73,6 +75,7 @@ function doPost(e) {
       String(payload.emojiSelected || '').trim(),
       String(payload.deviceType || '').trim(),
       campusValue,
+      rawIpValue,
       String(payload.userAgent || '').trim()
     ]);
 
@@ -197,7 +200,8 @@ function readRatings_(sheet) {
         emojiSelected: row[4],
         deviceType: row[5],
         campus: String(row[6] || '').trim(),
-        userAgent: row[7]
+        rawIp: String(row[7] || '').trim(),
+        userAgent: row[8]
       };
     });
 }
