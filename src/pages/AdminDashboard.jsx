@@ -6,7 +6,9 @@ import {
   CartesianGrid,
   Legend,
   ResponsiveContainer,
-  Tooltip
+  Tooltip,
+  XAxis,
+  YAxis
 } from 'recharts';
 import AdminChart from '../components/AdminChart';
 import LoadingButton from '../components/LoadingButton';
@@ -14,8 +16,6 @@ import StatCard from '../components/StatCard';
 import { technicians } from '../data/technicians';
 import { fetchRatings } from '../services/googleSheetService';
 import { formatAverage } from '../utils/ratingHelpers';
-
-
 
 function getRatingDate(value) {
   const date = new Date(value);
