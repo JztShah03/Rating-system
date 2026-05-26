@@ -1,22 +1,10 @@
 /**
- * Technician Rating System - Google Apps Script Backend
- *
- * IMPORTANT CORS NOTE:
- * Google Apps Script Web Apps do not behave like normal Node/Express APIs.
- * You cannot add Access-Control-Allow-Origin headers with response.addHeader().
- * This project uses:
- * - POST + no-cors from React for saving ratings
- * - JSONP for dashboard reads
- *
- * Setup options:
- * 1) Recommended: Open your Google Sheet, go to Extensions > Apps Script,
- *    paste this file, and deploy as Web App.
- * 2) Standalone script: paste your spreadsheet ID below.
+ * Apps Script ready backend (ES5-style) — paste this into your Apps Script project.
  */
 
-const SPREADSHEET_ID = ''; // Optional. Leave blank if this script is bound to the Google Sheet.
-const SHEET_NAME = 'Ratings';
-const HEADERS = [
+var SPREADSHEET_ID = '';
+var SHEET_NAME = 'Ratings';
+var HEADERS = [
   'Timestamp',
   'Technician Name',
   'Rating Value',
@@ -29,9 +17,9 @@ const HEADERS = [
 
 function doGet(e) {
   try {
-    const action = e && e.parameter ? e.parameter.action : '';
-    const callback = e && e.parameter ? e.parameter.callback : '';
-    const sheet = getOrCreateRatingsSheet_();
+    var action = e && e.parameter ? e.parameter.action : '';
+    var callback = e && e.parameter ? e.parameter.callback : '';
+    var sheet = getOrCreateRatingsSheet_();
 
     if (action === 'ratings') {
       return outputResponse_({
@@ -54,17 +42,17 @@ function doGet(e) {
 }
 
 function doPost(e) {
-  const lock = LockService.getScriptLock();
+  var lock = LockService.getScriptLock();
 
   try {
     lock.waitLock(10000);
 
-    const payload = parsePayload_(e);
+    var payload = parsePayload_(e);
     validatePayload_(payload);
 
-    const campusValue = String(payload.campus || '').trim() || 'Unknown';
+    var campusValue = String(payload.campus || '').trim() || 'Unknown';
 
-    const sheet = getOrCreateRatingsSheet_();
+    var sheet = getOrCreateRatingsSheet_();
     sheet.appendRow([
       new Date(),
       String(payload.technicianName).trim(),
@@ -89,7 +77,7 @@ function doPost(e) {
     try {
       lock.releaseLock();
     } catch (releaseError) {
-      // Lock may not have been acquired if waitLock failed. Ignore safely.
+      // ignore
     }
   }
 }
@@ -115,9 +103,9 @@ function validatePayload_(payload) {
     throw new Error('ratingValue is required.');
   }
 
-  const ratingValue = Number(payload.ratingValue);
+  var ratingValue = Number(payload.ratingValue);
 
-  if (!Number.isFinite(ratingValue) || ratingValue < 1 || ratingValue > 5) {
+  if (!isFinite(ratingValue) || ratingValue < 1 || ratingValue > 5) {
     throw new Error('ratingValue must be between 1 and 5.');
   }
 }
@@ -127,7 +115,7 @@ function getSpreadsheet_() {
     return SpreadsheetApp.openById(SPREADSHEET_ID);
   }
 
-  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 
   if (!spreadsheet) {
     throw new Error('No active spreadsheet found. Bind this script to a Google Sheet or set SPREADSHEET_ID.');
@@ -137,8 +125,8 @@ function getSpreadsheet_() {
 }
 
 function getOrCreateRatingsSheet_() {
-  const spreadsheet = getSpreadsheet_();
-  let sheet = spreadsheet.getSheetByName(SHEET_NAME);
+  var spreadsheet = getSpreadsheet_();
+  var sheet = spreadsheet.getSheetByName(SHEET_NAME);
 
   if (!sheet) {
     sheet = spreadsheet.insertSheet(SHEET_NAME);
@@ -159,8 +147,8 @@ function ensureHeaderRow_(sheet) {
     return;
   }
 
-  const firstRow = sheet.getRange(1, 1, 1, HEADERS.length).getValues()[0];
-  const hasCorrectHeaders = HEADERS.every(function (header, index) {
+  var firstRow = sheet.getRange(1, 1, 1, HEADERS.length).getValues()[0];
+  var hasCorrectHeaders = HEADERS.every(function (header, index) {
     return firstRow[index] === header;
   });
 
@@ -173,19 +161,19 @@ function ensureHeaderRow_(sheet) {
 }
 
 function readRatings_(sheet) {
-  const lastRow = sheet.getLastRow();
+  var lastRow = sheet.getLastRow();
 
   if (lastRow <= 1) {
     return [];
   }
 
-  const values = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
+  var values = sheet.getRange(2, 1, lastRow - 1, HEADERS.length).getValues();
 
   return values
     .filter(function (row) {
       var technicianName = String(row[1] || '').trim();
       var ratingValue = Number(row[2]);
-      var hasValidRating = Number.isFinite(ratingValue) && ratingValue >= 1 && ratingValue <= 5;
+      var hasValidRating = isFinite(ratingValue) && ratingValue >= 1 && ratingValue <= 5;
       return technicianName !== '' && hasValidRating;
     })
     .map(function (row) {
@@ -196,7 +184,7 @@ function readRatings_(sheet) {
         ratingLabel: row[3],
         emojiSelected: row[4],
         deviceType: row[5],
-        campus: String(row[6] || '').trim(),
+        branchLocation: String(row[6] || '').trim(),
         userAgent: row[7]
       };
     });
@@ -212,8 +200,8 @@ function formatTimestamp_(value) {
 
 function outputResponse_(data, callback) {
   if (callback) {
-    const safeCallback = sanitizeCallback_(callback);
-    const javascript = safeCallback + '(' + JSON.stringify(data) + ');';
+    var safeCallback = sanitizeCallback_(callback);
+    var javascript = safeCallback + '(' + JSON.stringify(data) + ');';
 
     return ContentService
       .createTextOutput(javascript)
@@ -226,7 +214,7 @@ function outputResponse_(data, callback) {
 }
 
 function sanitizeCallback_(callback) {
-  const value = String(callback || '').trim();
+  var value = String(callback || '').trim();
 
   if (!/^[A-Za-z_$][0-9A-Za-z_$]*$/.test(value)) {
     throw new Error('Invalid JSONP callback name.');

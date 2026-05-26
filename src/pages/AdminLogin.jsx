@@ -30,8 +30,8 @@ export default function AdminLogin({ onLogin }) {
           <LockKeyhole size={28} aria-hidden="true" />
         </div>
         <span className="eyebrow">Admin Access</span>
-        <h1>Technician Rating Dashboard</h1>
-        <p>Enter the admin password to view customer rating analytics.</p>
+        <h1>Service Rating Dashboard</h1>
+        <p>Enter the admin password to view user rating analytics.</p>
 
         <form onSubmit={handleSubmit} className="login-form">
           <label htmlFor="admin-password">Password</label>

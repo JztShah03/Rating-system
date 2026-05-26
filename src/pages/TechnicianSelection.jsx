@@ -12,15 +12,15 @@ export default function TechnicianSelection({ onSelectTechnician }) {
         transition={{ duration: 0.35 }}
       >
         <span className="eyebrow">Service Feedback</span>
-        <h1>Please Select Your ICT Staff</h1>
+        <h2>Which service did you receive?</h2>
         <p>
-          Choose the ICT Staff who served you. Your feedback helps improve service quality and customer experience.
+          Your feedback helps us improve service quality and enhance user experience.
         </p>
       </motion.section>
 
-      <section className="technician-grid" aria-label="Technician list">
+      <section className="technician-grid" aria-label="Service list">
         {technicians.map((technician) => (
-          <TechnicianCard key={technician.id} technician={technician} onSelect={onSelectTechnician} />
+          <TechnicianCard key={technician.name} technician={technician} onSelect={onSelectTechnician} />
         ))}
       </section>
     </main>

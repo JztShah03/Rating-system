@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function ThankYouPage({ onClearTechnician }) {
   const navigate = useNavigate();
-  const [secondsLeft, setSecondsLeft] = useState(5);
+  const [secondsLeft, setSecondsLeft] = useState(3);
 
   useEffect(() => {
     onClearTechnician();
@@ -35,7 +35,7 @@ export default function ThankYouPage({ onClearTechnician }) {
         <h1>Thank you for your feedback!</h1>
         <p>Redirecting in {secondsLeft} seconds...</p>
         <div className="countdown-bar" aria-hidden="true">
-          <span style={{ width: `${(secondsLeft / 5) * 100}%` }} />
+          <span style={{ width: `${(secondsLeft / 3) * 100}%` }} />
         </div>
       </motion.section>
     </main>

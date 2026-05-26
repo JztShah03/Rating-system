@@ -1,9 +1,7 @@
 import { RefreshCw, ShieldAlert } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Cell,
-  Pie,
-  PieChart,
+ main
   ResponsiveContainer,
   Tooltip
 } from 'recharts';
@@ -12,26 +10,28 @@ import LoadingButton from '../components/LoadingButton';
 import StatCard from '../components/StatCard';
 import { technicians } from '../data/technicians';
 import { fetchRatings } from '../services/googleSheetService';
-import { formatAverage, getRatingEmoji, getRatingLabel } from '../utils/ratingHelpers';
-
-const chartColors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e'];
+import { formatAverage } from '../utils/ratingHelpers';
 
 
-function normalizeTimestamp(value) {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleString();
-}
 
 function getRatingDate(value) {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+function normalizeBranch(value) {
+  const branch = String(value || '').trim().toUpperCase();
+  if (branch === 'EP' || branch === 'EP CAMPUS') return 'EP';
+  if (branch === 'JB' || branch === 'JB CAMPUS') return 'JB';
+  return 'Unknown';
+}
+
 function buildTechnicianSummary(records) {
   return technicians.map((technician) => {
-    const technicianRecords = records.filter((record) => record.technicianId === technician.id);
+    const technicianRecords = records.filter((record) => {
+      const recordTechnician = String(record.technicianName || record.technicianId);
+      return recordTechnician === technician.name;
+    });
     const total = technicianRecords.length;
     const ratingSum = technicianRecords.reduce((sum, record) => sum + Number(record.ratingValue || 0), 0);
     const average = total ? ratingSum / total : 0;
@@ -42,9 +42,9 @@ function buildTechnicianSummary(records) {
     }, {});
 
     return {
-      technicianId: technician.id,
+      technicianId: technician.name,
       technicianName: technician.name,
-      name: `${technician.name} (${technician.id})`,
+      name: technician.name,
       total,
       average: Number(average.toFixed(2)),
       counts
@@ -52,20 +52,12 @@ function buildTechnicianSummary(records) {
   });
 }
 
-function buildRatingDistribution(records) {
-  return [1, 2, 3, 4, 5].map((value) => ({
-    name: `${value} - ${getRatingLabel(value)}`,
-    value,
-    count: records.filter((record) => Number(record.ratingValue) === value).length,
-    emoji: getRatingEmoji(value)
-  }));
-}
-
 export default function AdminDashboard({ onLogout }) {
   const [records, setRecords] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [technicianFilter, setTechnicianFilter] = useState('all');
+  const [branchFilter, setBranchFilter] = useState('all');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
@@ -89,38 +81,87 @@ export default function AdminDashboard({ onLogout }) {
     loadData();
   }, [loadData]);
 
+  useEffect(() => {
+    const intervalId = window.setInterval(loadData, 30000);
+    return () => window.clearInterval(intervalId);
+  }, [loadData]);
+
   const filteredRecords = useMemo(() => {
     return records.filter((record) => {
-      const matchesTechnician = technicianFilter === 'all' || record.technicianId === technicianFilter;
+      const recordTechnician = String(record.technicianName || record.technicianId);
+      const matchesTechnician = technicianFilter === 'all' || recordTechnician === technicianFilter;
       const recordDate = getRatingDate(record.timestamp);
       const matchesStart = !startDate || (recordDate && recordDate >= new Date(`${startDate}T00:00:00`));
       const matchesEnd = !endDate || (recordDate && recordDate <= new Date(`${endDate}T23:59:59`));
+      const recordBranch = normalizeBranch(record.campus);
+      const matchesBranch = branchFilter === 'all' || recordBranch === branchFilter;
 
-      return matchesTechnician && matchesStart && matchesEnd;
+      return matchesTechnician && matchesBranch && matchesStart && matchesEnd;
     });
-  }, [endDate, records, startDate, technicianFilter]);
+  }, [branchFilter, endDate, records, startDate, technicianFilter]);
 
   const totalRatings = filteredRecords.length;
   const ratingSum = filteredRecords.reduce((sum, record) => sum + Number(record.ratingValue || 0), 0);
   const overallAverage = totalRatings ? ratingSum / totalRatings : 0;
   const technicianSummary = buildTechnicianSummary(filteredRecords);
   const activeTechnicians = technicianSummary.filter((item) => item.total > 0);
+  const filteredTechnicianSummary = technicianFilter === 'all'
+    ? technicianSummary
+    : technicianSummary.filter((item) => item.technicianName === technicianFilter);
+
+  const branchSummaryData = useMemo(() => {
+    const branchCounts = filteredRecords.reduce((acc, record) => {
+      const branch = normalizeBranch(record.campus);
+      if (!branch) return acc;
+      acc[branch] = (acc[branch] || 0) + 1;
+      return acc;
+    }, {});
+
+    return Object.entries(branchCounts).map(([branch, total]) => ({ branch, total }));
+  }, [filteredRecords]);
+
+  const branchAverageData = useMemo(() => {
+    const branchStats = filteredRecords.reduce((acc, record) => {
+      const branch = normalizeBranch(record.campus);
+      const value = Number(record.ratingValue || 0);
+
+      if (!acc[branch]) {
+        acc[branch] = { total: 0, count: 0 };
+      }
+
+      acc[branch].total += value;
+      acc[branch].count += 1;
+      return acc;
+    }, {});
+
+    return Object.entries(branchStats).map(([branch, stats]) => ({
+      branch,
+      average: stats.count ? Number((stats.total / stats.count).toFixed(2)) : 0
+    }));
+  }, [filteredRecords]);
+
   const bestTechnician = activeTechnicians.length
     ? [...activeTechnicians].sort((a, b) => b.average - a.average || b.total - a.total)[0]
     : null;
   const lowestTechnician = activeTechnicians.length
     ? [...activeTechnicians].sort((a, b) => a.average - b.average || b.total - a.total)[0]
     : null;
-  const distribution = buildRatingDistribution(filteredRecords);
-  const recentRecords = filteredRecords.slice(0, 10);
+  const ratingBreakdownData = filteredTechnicianSummary.map((item) => ({
+    technicianName: item.technicianName,
+    '1': item.counts[1],
+    '2': item.counts[2],
+    '3': item.counts[3],
+    '4': item.counts[4],
+    '5': item.counts[5]
+  }));
 
   return (
     <main className="page page--dashboard">
       <header className="dashboard-header">
         <div>
           <span className="eyebrow">Admin Dashboard</span>
-          <h1>Technician Rating Analytics</h1>
-          <p>Monitor customer feedback, technician performance, and rating trends from Google Sheets.</p>
+          <h1>ICT Service Analytics</h1>
+          <p>Monitor user feedback, service performance, and rating trends from Google Sheets.</p>
         </div>
         <div className="dashboard-header__actions">
           <LoadingButton isLoading={isLoading} loadingText="Refreshing..." onClick={loadData}>
@@ -132,24 +173,25 @@ export default function AdminDashboard({ onLogout }) {
         </div>
       </header>
 
-      <section className="warning-banner">
-        <ShieldAlert size={20} aria-hidden="true" />
-        <p>
-          Demo security only: the admin password is stored in a Vite client environment variable and is visible in
-          the browser bundle. Replace with real server-side authentication before production use.
-        </p>
-      </section>
-
       <section className="filter-panel" aria-label="Dashboard filters">
         <label>
-          Technician
+          ICT Service
           <select value={technicianFilter} onChange={(event) => setTechnicianFilter(event.target.value)}>
-            <option value="all">All technicians</option>
+            <option value="all">All Services</option>
             {technicians.map((technician) => (
-              <option key={technician.id} value={technician.id}>
-                {technician.name} ({technician.id})
+              <option key={technician.name} value={technician.name}>
+                {technician.name}
               </option>
             ))}
+          </select>
+        </label>
+        <label>
+          Branch
+          <select value={branchFilter} onChange={(event) => setBranchFilter(event.target.value)}>
+            <option value="all">All Branches</option>
+            <option value="EP">EP</option>
+            <option value="JB">JB</option>
+            <option value="Unknown">Unknown</option>
           </select>
         </label>
         <label>
@@ -165,6 +207,7 @@ export default function AdminDashboard({ onLogout }) {
           type="button"
           onClick={() => {
             setTechnicianFilter('all');
+            setBranchFilter('all');
             setStartDate('');
             setEndDate('');
           }}
@@ -194,7 +237,7 @@ export default function AdminDashboard({ onLogout }) {
       {!errorMessage && !isLoading && totalRatings === 0 ? (
         <section className="empty-state">
           <h2>No rating data yet</h2>
-          <p>Once customers submit ratings, analytics and recent records will appear here.</p>
+          <p>Once users submit ratings, analytics and recent records will appear here.</p>
         </section>
       ) : null}
 
@@ -216,52 +259,36 @@ export default function AdminDashboard({ onLogout }) {
           </section>
 
           <section className="charts-grid">
-            <AdminChart title="Rating Distribution">
-              <ResponsiveContainer width="100%" height={310}>
-                <PieChart>
-                  <Pie
-                    data={distribution}
-                    dataKey="count"
-                    nameKey="name"
-                    innerRadius={70}
-                    outerRadius={105}
-                    paddingAngle={3}
-                  >
-                    {distribution.map((entry, index) => (
-                      <Cell key={entry.value} fill={chartColors[index % chartColors.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip formatter={(value, name, item) => [`${value} ratings`, `${item.payload.emoji} ${name}`]} />
-                </PieChart>
+ main
               </ResponsiveContainer>
             </AdminChart>
+
           </section>
 
           <section className="table-card">
             <div className="table-card__header">
-              <h2>Technician Performance Breakdown</h2>
-              <p>Average rating and distribution count from 1 to 5 for every technician.</p>
+              <h2>Service Performance Breakdown</h2>
+              <p>Average rating and distribution count from 1 to 5 for every service.</p>
             </div>
             <div className="table-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th>Technician</th>
+                    <th>ICT Service</th>
                     <th>Total</th>
                     <th>Average</th>
-                    <th>1 😡</th>
-                    <th>2 🙁</th>
-                    <th>3 😐</th>
-                    <th>4 🙂</th>
-                    <th>5 😄</th>
+                    <th>Very Unsatisfied</th>
+                    <th>Unsatisfied</th>
+                    <th>Neutral</th>
+                    <th>Satisfied</th>
+                    <th>Very Satisfied</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {technicianSummary.map((item) => (
+                  {filteredTechnicianSummary.map((item) => (
                     <tr key={item.technicianId}>
                       <td>
                         <strong>{item.technicianName}</strong>
-                        <span>{item.technicianId}</span>
                       </td>
                       <td>{item.total}</td>
                       <td>{formatAverage(item.average)}</td>
@@ -270,45 +297,6 @@ export default function AdminDashboard({ onLogout }) {
                       <td>{item.counts[3]}</td>
                       <td>{item.counts[4]}</td>
                       <td>{item.counts[5]}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          <section className="table-card">
-            <div className="table-card__header">
-              <h2>Latest Rating Records</h2>
-              <p>Showing up to 10 most recent records based on the active filters.</p>
-            </div>
-            <div className="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Timestamp</th>
-                    <th>Technician</th>
-                    <th>Rating</th>
-                    <th>Device</th>
-                    <th>User Agent</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentRecords.map((record, index) => (
-                    <tr key={`${record.timestamp}-${record.technicianId}-${index}`}>
-                      <td>{normalizeTimestamp(record.timestamp)}</td>
-                      <td>
-                        <strong>{record.technicianName}</strong>
-                        <span>{record.technicianId}</span>
-                      </td>
-                      <td>
-                        <strong>
-                          {record.emojiSelected} {record.ratingValue}/5
-                        </strong>
-                        <span>{record.ratingLabel}</span>
-                      </td>
-                      <td>{record.deviceType || 'Unknown'}</td>
-                      <td className="user-agent-cell">{record.userAgent || 'Unknown'}</td>
                     </tr>
                   ))}
                 </tbody>
