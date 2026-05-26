@@ -1,16 +1,11 @@
 import { RefreshCw, ShieldAlert } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Bar,
-  BarChart,
-  CartesianGrid,
   Cell,
   Pie,
   PieChart,
   ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
+  Tooltip
 } from 'recharts';
 import AdminChart from '../components/AdminChart';
 import LoadingButton from '../components/LoadingButton';
@@ -221,30 +216,6 @@ export default function AdminDashboard({ onLogout }) {
           </section>
 
           <section className="charts-grid">
-            <AdminChart title="Average Rating by Technician">
-              <ResponsiveContainer width="100%" height={310}>
-                <BarChart data={technicianSummary} margin={{ top: 10, right: 20, left: 0, bottom: 48 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="technicianName" angle={-35} textAnchor="end" interval={0} height={70} />
-                  <YAxis domain={[0, 5]} />
-                  <Tooltip />
-                  <Bar dataKey="average" name="Average Rating" fill="#2563eb" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </AdminChart>
-
-            <AdminChart title="Number of Ratings per Technician">
-              <ResponsiveContainer width="100%" height={310}>
-                <BarChart data={technicianSummary} margin={{ top: 10, right: 20, left: 0, bottom: 48 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="technicianName" angle={-35} textAnchor="end" interval={0} height={70} />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="total" name="Total Ratings" fill="#0f766e" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </AdminChart>
-
             <AdminChart title="Rating Distribution">
               <ResponsiveContainer width="100%" height={310}>
                 <PieChart>
