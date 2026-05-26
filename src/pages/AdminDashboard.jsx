@@ -1,4 +1,4 @@
-import { RefreshCw, ShieldAlert } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Bar,
