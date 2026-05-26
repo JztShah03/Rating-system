@@ -1,0 +1,131 @@
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import BackButton from '../components/BackButton';
+import EmojiBurst from '../components/EmojiBurst';
+import RatingButton from '../components/RatingButton';
+import { saveRating } from '../services/googleSheetService';
+import { getDeviceType, getUserAgent } from '../utils/deviceHelpers';
+import { ratingOptions } from '../utils/ratingHelpers';
+
+export default function RatingPage({ selectedTechnician, onClearTechnician }) {
+  const navigate = useNavigate();
+  const [isSaving, setIsSaving] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [lastAttempt, setLastAttempt] = useState(null);
+  const [burstKey, setBurstKey] = useState(null);
+
+  useEffect(() => {
+    if (!selectedTechnician) {
+      navigate('/', { replace: true });
+    }
+  }, [navigate, selectedTechnician]);
+
+  if (!selectedTechnician) return null;
+
+  async function handleSubmit(option) {
+    if (isSaving) return;
+
+    setIsSaving(true);
+    setSelectedRating(option.value);
+    setLastAttempt(option);
+    setErrorMessage('');
+    setBurstKey(Date.now());
+
+    try {
+      await saveRating({
+        technicianId: selectedTechnician.id,
+        technicianName: selectedTechnician.name,
+        ratingValue: option.value,
+        ratingLabel: option.label,
+        emojiSelected: option.emoji,
+        deviceType: getDeviceType(),
+        userAgent: getUserAgent()
+      });
+
+      navigate('/thank-you', { replace: true });
+    } catch (error) {
+      console.error(error);
+      setErrorMessage('Unable to save your rating. Please try again.');
+      setIsSaving(false);
+    }
+  }
+
+  function handleBack() {
+    onClearTechnician();
+    navigate('/', { replace: true });
+  }
+
+  return (
+    <main className="page page--rating">
+      <BackButton onClick={handleBack} label="Select another ICT Staff" />
+
+      <motion.section
+        className="rating-panel"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+      >
+        <div className="selected-technician">
+          <img src={selectedTechnician.image} alt={`${selectedTechnician.name} profile`} />
+          <div>
+            <span className="eyebrow">You selected</span>
+            <h1>{selectedTechnician.name}</h1>
+            <p>{selectedTechnician.id}</p>
+          </div>
+        </div>
+
+        <div className="rating-copy">
+          <h2>How was my service?</h2>
+          <p>Please rate based on the service quality you received today.</p>
+        </div>
+
+        <div className="rating-actions" aria-label="Rating options">
+          {ratingOptions.map((option) => (
+            <RatingButton
+              key={option.value}
+              option={option}
+              disabled={isSaving}
+              isSelected={selectedRating === option.value}
+              onClick={handleSubmit}
+            />
+          ))}
+        </div>
+
+        <div className="burst-anchor">
+          <EmojiBurst emoji={lastAttempt?.emoji} burstKey={burstKey} />
+        </div>
+
+        <AnimatePresence>
+          {isSaving && !errorMessage ? (
+            <motion.div
+              className="status-message status-message--saving"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+            >
+              <span className="spinner" aria-hidden="true" />     Thank you, we appreciate your evaluation!
+
+            </motion.div>
+          ) : null}
+
+          {errorMessage ? (
+            <motion.div
+              className="status-message status-message--error"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              role="alert"
+            >
+              <p>{errorMessage}</p>
+              <button type="button" onClick={() => lastAttempt && handleSubmit(lastAttempt)}>
+                Retry
+              </button>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </motion.section>
+    </main>
+  );
+}
