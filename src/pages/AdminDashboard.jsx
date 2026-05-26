@@ -163,7 +163,6 @@ export default function AdminDashboard({ onLogout }) {
             <option value="all">All Campuses</option>
             <option value="EP">EP</option>
             <option value="JB">JB</option>
-            <option value="Unknown">Unknown</option>
           </select>
         </label>
         <label>
