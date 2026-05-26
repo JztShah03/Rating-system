@@ -60,7 +60,7 @@ export default function AdminDashboard({ onLogout }) {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
   const [technicianFilter, setTechnicianFilter] = useState('all');
-  const [branchFilter, setBranchFilter] = useState('all');
+  const [campusFilter, setCampusFilter] = useState('all');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
@@ -97,11 +97,11 @@ export default function AdminDashboard({ onLogout }) {
       const matchesStart = !startDate || (recordDate && recordDate >= new Date(`${startDate}T00:00:00`));
       const matchesEnd = !endDate || (recordDate && recordDate <= new Date(`${endDate}T23:59:59`));
       const recordBranch = normalizeBranch(record.campus);
-      const matchesBranch = branchFilter === 'all' || recordBranch === branchFilter;
+      const matchesBranch = campusFilter === 'all' || recordBranch === campusFilter;
 
       return matchesTechnician && matchesBranch && matchesStart && matchesEnd;
     });
-  }, [branchFilter, endDate, records, startDate, technicianFilter]);
+  }, [campusFilter, endDate, records, startDate, technicianFilter]);
 
   const totalRatings = filteredRecords.length;
   const ratingSum = filteredRecords.reduce((sum, record) => sum + Number(record.ratingValue || 0), 0);
@@ -158,9 +158,9 @@ export default function AdminDashboard({ onLogout }) {
           </select>
         </label>
         <label>
-          Branch
-          <select value={branchFilter} onChange={(event) => setBranchFilter(event.target.value)}>
-            <option value="all">All Branches</option>
+          Campus
+          <select value={campusFilter} onChange={(event) => setCampusFilter(event.target.value)}>
+            <option value="all">All Campuses</option>
             <option value="EP">EP</option>
             <option value="JB">JB</option>
             <option value="Unknown">Unknown</option>
@@ -179,7 +179,7 @@ export default function AdminDashboard({ onLogout }) {
           type="button"
           onClick={() => {
             setTechnicianFilter('all');
-            setBranchFilter('all');
+            setCampusFilter('all');
             setStartDate('');
             setEndDate('');
           }}
